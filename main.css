@@ -1,0 +1,8 @@
+:root{
+    --background_green:#0F803E;
+    --background_black:#101318;
+}
+
+body{
+    background-image: linear-gradient(to right, var(--background_black) 5%, var(--background_green) 95%);
+}
