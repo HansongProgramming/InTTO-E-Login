@@ -1,8 +1,15 @@
 {
   "dependencies": {
-    "electron": "^36.3.2",
+    "chart.js": "^4.4.1",
+    "cors": "^2.8.5",
+    "export-to-csv": "^1.4.0",
+    "express": "^5.1.0",
     "moment": "^2.30.1",
+    "nodemon": "^3.1.10",
     "weather-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "electron": "^36.3.2"
   },
   "name": "intto-e-login",
   "version": "1.0.0",

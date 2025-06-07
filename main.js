@@ -7,6 +7,10 @@ function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 1024,
         height: 576,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
     });
 
     mainWindow.loadFile(path.join(__dirname, 'sessionPage.html'));

@@ -4,17 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>E-Login Moment</title>
     <link rel="stylesheet" href="main.css">
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
 </head>
 
 <body>
-    <div class="session-page-main">
-        <div class="E-login"></div>
-        <div class="Calendar"></div>
-        <div class="rate"></div>
-        <div class="contacts"></div>
+    <div class="main">
+        <div class="session-page-main">
+            <div class="E-login">elogmoment</div>
+            <div class="Calendar">
+                <div class="time" id="time"></div>
+                <div class="date" id="date"></div>
+                <div class="weather" id="weather"></div>
+            </div>
+            <div class="rate">ratemoment</div>
+            <div class="contacts">contentmoment</div>
+        </div>
     </div>
+    <div class="moment" id="moment">MOMENT</div>
+    <div class="spontaneous" id="spontaneous">SPONTANEOUS</div>
+    <script src="./index.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+
+</head>
+
+<body>
+    <div class="main">
+        <div class="login-page">
+            <div class="header">
+                <img src="images/InTTO_Logo_White.svg" alt="">
+                <h1>Time here</h1>
+            </div>
+            <div class="registration">
+                <form class="user-registry" id="user-registry">
+                    <h1>Intern Registration:</h1>
+                    <div class="selection">
+                        <label for="honorifics">Honorifics</label>
+                        <select name="honorifics" id="">
+                            <option value="">Ex: Mr.</option>
+                            <option value="Mr.">Mr.</option>
+                            <option value="Ms.">Ms.</option>
+                        </select>
+                        <label for="suffix">Suffix</label>
+                        <select name="suffix" id="">
+                            <option value="">Ex: Jr. Sr.</option>
+                            <option value="Jr.">Jr.</option>
+                            <option value="Sr.">Sr.</option>
+                            <option value="II">II</option>
+                        </select>
+                    </div>
+                    <input type="text" name="full name" id="" placeholder="First Name   M.I.  Last Name">
+                    <input type="email" name="email" id="" placeholder="emailaddress@students.uc-bcf.edu.ph">
+                    <input type="text" name="address" id="" placeholder="School, Department, or Company Name">
+                    <input type="submit" value="Submit Details" class="submit" />
+                </form>
+            </div>
+            <div class="intern-list">
+                <div class="search">
+                    <input type="search" name="" id="search-bar">
+                </div>
+                <div class="list" id="list">
+                    <div class="person">
+                        <div class="person-top">
+                            <p>Juan F. Dela Cruzes</p>
+                            <p>96 Hours</p>
+                        </div>
+                        <div class="person-bottom">
+                            <p>College</p>
+                            <button class="Time">Time-in</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('user-registry');
+        const searchBar = document.getElementById('search-bar');
+
+        let internList = {};
+
+        fetch('./db/interns.json')
+            .then(response => response.json())
+            .then(data => { internList = data; })
+            .catch(error => console.error('Error fetching interns:', error));
+
+        // console.log(internList);
+
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            internList[data['full name']] = {
+                "honorifics": data['honorifics'],
+                "suffix": data['suffix'],
+                "email": data['email'],
+                "address": data['address']
+            };
+
+            updateInternList(internList);
+            form.reset();
+        });
+
+        searchBar.addEventListener('input', function () {
+            const searchTerm = searchBar.value.toLowerCase();
+            const listContainer = document.getElementById('list');
+
+            const interns = getInternList().then(interns => {
+                listContainer.innerHTML = '';
+
+                Object.keys(interns).forEach(name => {
+                    if (name.toLowerCase().includes(searchTerm)) {
+                        const personDiv = document.createElement('div');
+                        personDiv.className = 'person';
+                        personDiv.innerHTML = `
+                            <div class="person-top">
+                                <p>${interns[name].honorifics} ${name} ${interns[name].suffix}</p>
+                                <p>${interns[name].hours || '0'} Hours</p>
+                            </div>
+                            <div class="person-bottom">
+                                <p>${interns[name].address}</p>
+                                <button class="Time">Time-in</button>
+                            </div>
+                        `;
+                        listContainer.appendChild(personDiv);
+                    }
+                });
+            }).catch(err => console.error('Error fetching intern list:', err));
+        });
+
+        async function getInternList() {
+            try {
+                const response = await fetch('http://192.168.0.147:3000/api/internList');
+                const result = await response.json();
+
+                return result;
+            } catch (err) {
+                console.error('Error fetching intern list:', err);
+            }
+        }
+
+        async function updateInternList(data) {
+            try {
+                const response = await fetch('http://192.168.0.147:3000/api/internList', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) throw new Error('Failed to update intern list');
+
+                console.log('Intern list updated successfully');
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+        
+        function renderInterns(interns) {
+            const listContainer = document.getElementById('list');
+            listContainer.innerHTML = '';
+
+            Object.keys(interns).forEach(name => {
+                const personDiv = document.createElement('div');
+                personDiv.className = 'person';
+                personDiv.innerHTML = `
+                    <div class="person-top  ">
+                        <p>${interns[name].honorifics} ${name} ${interns[name].suffix}</p>
+                        <p>${interns[name].hours || '0'} Hours</p>  
+                    </div>
+                    <div class="person-bottom">
+                        <p>${interns[name].address}</p>
+                        <button class="Time">Time-in</button>
+                    </div>
+                `;
+                listContainer.appendChild(personDiv);
+            });
+        }
+
+        window.onload = async () => {
+            const interns = await getInternList();
+            if (interns) {
+                renderInterns(interns);
+            }
+        };
+    </script>
+</body>
+
+</html>

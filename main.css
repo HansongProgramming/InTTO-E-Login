@@ -1,8 +1,250 @@
 :root{
     --background_green:#0F803E;
     --background_black:#101318;
+    --containers: rgba(0,0,0, 0.5);
+    --whitenesscolor: white;
 }
 
 body{
     background-image: linear-gradient(to right, var(--background_black) 5%, var(--background_green) 95%);
+    overflow-x: hidden ;
+    overflow-y: hidden;
 }
+
+.main{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ------------------------- sessionPage.html ---------------- */
+
+.session-page-main{
+    display: grid;
+    width: 60%;
+    height: 80%;
+    gap: calc(1.5vh);
+    grid-template-areas:
+    'login calendar calendar'
+    'login calendar calendar'
+    'login calendar calendar'
+    'rate calendar calendar'
+    'rate contacts contacts'
+    ;
+}
+
+.E-login{
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: login;
+}
+
+.Calendar{
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: calendar;
+}
+/* IM MOMENTING IT */
+.rate{ 
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: rate;
+}
+
+.contacts{
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: contacts;
+}
+
+.moment, .spontaneous{
+    display: none;
+    position: absolute;
+    bottom: 0;
+    color: lightgray
+}
+
+.moment{
+    right: 0;
+}
+.spontaneous{
+    left: 0;
+}
+
+/* ------------------------- IM INTERNING IT.html ---------------- */
+
+.login-page{
+    display: grid;
+    width: 60vw;
+    height: 80vh;
+    gap: calc(1.5vh);
+    grid-template-areas:
+    'header   header    intern-list intern-list'
+    'registry registry  intern-list intern-list '
+    'registry registry  intern-list intern-list'
+    'registry registry  intern-list intern-list'
+    'registry registry  intern-list intern-list'
+    'registry registry  intern-list intern-list'
+    'registry registry  intern-list intern-list'
+    'registry registry  intern-list intern-list'
+    ;
+    overflow: hidden;
+}
+
+.header{ 
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: header;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    font-family: poppins;
+    justify-content: space-between;
+}
+
+.header img {
+    margin-left: 2vw;
+    width: 20%;
+    height: auto;
+    object-fit: contain; 
+    display: block; 
+    border-radius: 15px; 
+}   
+
+.header h1{
+    align-self: center;
+    margin-right: 2vw;
+}
+
+
+.registration{ 
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: registry;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.user-registry{
+    display: flex;
+    flex-direction: column;
+    gap: calc(5vh);
+    margin: calc(2vh);
+    width: 60%;
+    font-family: poppins;
+}
+
+.user-registry input{
+    background-color: rgba(0,0,0, 0);
+    border: none;
+    border-bottom: gray 1px solid;
+    color: white;
+    font-size: 1rem;
+}
+
+.user-registry .submit{
+    border: none;
+}
+
+.user-registry select{
+    background-color: rgba(0,0,0, 0) ;
+    font-size: 1rem;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 15px ;
+}
+.user-registry select option {
+    color: black;              /* Option text appears black */
+    background-color: white;   /* Optional: light dropdown background */
+}
+
+.intern-list{
+    background-color: var(--containers);
+    border: solid white 0.5px;
+    border-radius: 15px;
+    grid-area: intern-list;
+    overflow: hidden; 
+}
+
+.search input{
+    width: 20vw;
+    margin: 1vw;
+    border-radius: 15px;
+    padding: 0.5vw;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    border: solid 1px white;
+}
+
+.list{
+    width: 90%;
+    margin: 0 auto;
+    height: 80%;
+    overflow-y: scroll;
+}
+
+.person{
+    width: 100%;
+    border-top: solid white 1px;
+    border-bottom: solid white 1px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-size: 15px;
+    flex-wrap: wrap;
+    font-family: poppins;
+}
+
+.person-top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.person-bottom{
+    margin-top: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.person-bottom button{
+    background-color: var(--containers);
+    color: white;
+    border-radius: 15px;
+    height: 2rem;
+}
+
+/* Target the whole scrollbar */
+::-webkit-scrollbar {
+    width: 5px;              /* vertical scrollbar width */
+    height: 30%;             /* horizontal scrollbar height */
+}
+
+/* The track (background of scrollbar) */
+::-webkit-scrollbar-track {
+    background: var(--containers);
+    border-radius: 10px;
+}
+
+/* The draggable thumb */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    border: 3px solid #f0f0f0; /* creates padding around the thumb */
+}
+
+/* On hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+    
