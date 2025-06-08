@@ -9,13 +9,33 @@
 }
 
 body {
-  background-image: linear-gradient(
-    to right,
-    var(--background_black) 5%,
-    var(--background_green) 95%
-  );
+  background-color: #101318;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+
+.lights {
+  background-color: #0f803e;
+  width: 80vw;
+  height: 80vw;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  transform: rotate(0deg) translateX(50%) translateY(-50%);
+  transform-origin: center center;
+  filter: blur(25rem);
+  border-radius: 100%;
+  z-index: -1;
+  animation: orbit 10s linear infinite;
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(50%) translateY(-50%);
+  }
+  100% {
+    transform: rotate(360deg) translateX(50%) translateY(-50%);
+  }
 }
 
 .main {
@@ -172,7 +192,10 @@ body {
     padding: 0.5rem;
     color: white;
     border-radius: 8px;
+    margin-right: 1.2rem;
 }
+
+
 
 option {
   color: white;        
