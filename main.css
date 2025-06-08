@@ -1,182 +1,200 @@
-:root{
-    --background_green:#0F803E;
-    --background_black:#101318;
-    --containers: rgba(0,0,0, 0.5);
-    --whitenesscolor: white;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300&display=swap");
+
+:root {
+  --background_green: #0f803e;
+  --background_black: #101318;
+  --containers: linear-gradient(to right, #2a2a2a90 20%, #9f9f9f30 80%);
+  --whitenesscolor: white;
+  --font-poppins: "Poppins", sans-serif;
 }
 
-body{
-    background-image: linear-gradient(to right, var(--background_black) 5%, var(--background_green) 95%);
-    overflow-x: hidden ;
-    overflow-y: hidden;
+body {
+  background-image: linear-gradient(
+    to right,
+    var(--background_black) 5%,
+    var(--background_green) 95%
+  );
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
-.main{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ------------------------- sessionPage.html ---------------- */
 
-.session-page-main{
-    display: grid;
-    width: 60%;
-    height: 80%;
-    gap: calc(1.5vh);
-    grid-template-areas:
-    'login calendar calendar'
-    'login calendar calendar'
-    'login calendar calendar'
-    'rate calendar calendar'
-    'rate contacts contacts'
-    ;
+.session-page-main {
+  display: grid;
+  width: 60%;
+  height: 80%;
+  gap: calc(1.5vh);
+  grid-template-areas:
+    "login calendar calendar"
+    "login calendar calendar"
+    "login calendar calendar"
+    "rate calendar calendar"
+    "rate contacts contacts";
 }
 
-.E-login{
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: login;
+.E-login {
+  background-color: var(--containers);
+  border: solid white 0.5px;
+  border-radius: 15px;
+  grid-area: login;
 }
 
-.Calendar{
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: calendar;
+.Calendar {
+  background-color: var(--containers);
+  border: solid white 0.5px;
+  border-radius: 15px;
+  grid-area: calendar;
 }
 /* IM MOMENTING IT */
-.rate{ 
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: rate;
+.rate {
+  background-color: var(--containers);
+  border: solid white 0.5px;
+  border-radius: 15px;
+  grid-area: rate;
 }
 
-.contacts{
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: contacts;
+.contacts {
+  background-color: var(--containers);
+  border: solid white 0.5px;
+  border-radius: 15px;
+  grid-area: contacts;
 }
 
-.moment, .spontaneous{
-    display: none;
-    position: absolute;
-    bottom: 0;
-    color: lightgray
+.moment,
+.spontaneous {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  color: lightgray;
 }
 
-.moment{
-    right: 0;
+.moment {
+  right: 0;
 }
-.spontaneous{
-    left: 0;
+.spontaneous {
+  left: 0;
 }
 
 /* ------------------------- IM INTERNING IT.html ---------------- */
 
-.login-page{
-    display: grid;
-    width: 60vw;
-    height: 80vh;
-    gap: calc(1.5vh);
-    grid-template-areas:
-    'header   header    intern-list intern-list'
-    'registry registry  intern-list intern-list '
-    'registry registry  intern-list intern-list'
-    'registry registry  intern-list intern-list'
-    'registry registry  intern-list intern-list'
-    'registry registry  intern-list intern-list'
-    'registry registry  intern-list intern-list'
-    'registry registry  intern-list intern-list'
-    ;
-    overflow: hidden;
+.login-page {
+  display: flex;
+  height: calc(100vh);
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-poppins);
 }
 
-.header{ 
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: header;
-    display: flex;
-    flex-direction: row;
-    color: white;
-    font-family: poppins;
-    justify-content: space-between;
+.registration-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(63.88%);
+  width: 33%;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  height: 21.27%;
+  width: 100%;
+  border-radius: 15px;
+  border: white 1px solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-image: var(--containers);
 }
 
 .header img {
-    margin-left: 2vw;
-    width: 20%;
-    height: auto;
-    object-fit: contain; 
-    display: block; 
-    border-radius: 15px; 
-}   
-
-.header h1{
-    align-self: center;
-    margin-right: 2vw;
+  max-width: 50%;
+  max-height: 50%;
+  padding: 5rem;
 }
 
-
-.registration{ 
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: registry;
-    display: flex;
-    flex-direction: column;
-    color: white;
+.header h1 {
+  padding: 5rem;
+  color: white;
+  font-weight: 200;
+  font-size: 5rem;
 }
 
-.user-registry{
-    display: flex;
-    flex-direction: column;
-    gap: calc(5vh);
-    margin: calc(2vh);
-    width: 60%;
-    font-family: poppins;
+.registration {
+  height: 77.26%;
+  width: 99%;
+  border-radius: 15px;
+  border: white 1px solid;
+  background-image: var(--containers);
+}
+
+.user-registry {
+  padding: 0.5rem 0rem 0rem 5rem;
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  gap: 1.5rem;
+  color: white;
+}
+
+.user-registry h1 {
+  font-weight: 200;
+  font-size: 3rem;
 }
 
 .user-registry input{
-    background-color: rgba(0,0,0, 0);
+    outline: none;
+    background-color: transparent;
     border: none;
-    border-bottom: gray 1px solid;
+    border-bottom: 1px solid grey;
+    font-size: 1.2rem;
     color: white;
-    font-size: 1rem;
+    font-family: var(--font-poppins);
 }
 
 .user-registry .submit{
     border: none;
-}
-
-.user-registry select{
-    background-color: rgba(0,0,0, 0) ;
-    font-size: 1rem;
     color: white;
-    padding: 0.5rem;
-    border-radius: 15px ;
-}
-.user-registry select option {
-    color: black;              /* Option text appears black */
-    background-color: white;   /* Optional: light dropdown background */
 }
 
-.intern-list{
-    background-color: var(--containers);
-    border: solid white 0.5px;
-    border-radius: 15px;
-    grid-area: intern-list;
-    overflow: hidden; 
+.selection select{
+    background-color: transparent;
+    padding: 0.5rem;
+    color: white;
+    border-radius: 8px;
+}
+
+option {
+  color: white;        
+  background-color: black; 
+}
+
+.intern-list {
+display: flex;
+  height: calc(63.88%);
+  width: 25%;
+  border-radius: 15px;
+  border: white 1px solid;
+  background-image: var(--containers);
+flex-direction: column;
+}
+
+.search{
+    width: 100%;
 }
 
 .search input{
-    width: 20vw;
+    width: 90%;
     margin: 1vw;
     border-radius: 15px;
     padding: 0.5vw;
@@ -199,30 +217,42 @@ body{
     display: flex;
     flex-direction: column;
     color: white;
-    font-size: 15px;
-    flex-wrap: wrap;
-    font-family: poppins;
+    font-size: 1.2rem;
 }
 
 .person-top{
     display: flex;
+    margin-right: 1.5rem;
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 0;
 }
 
 .person-bottom{
     margin-top: 0;
+    margin-right: 1.5rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
-.person-bottom button{
+.person-bottom button {
     background-color: var(--containers);
     color: white;
+    border: solid white 1px;
     border-radius: 15px;
     height: 2rem;
+    font-size: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.person-bottom button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px white;
+}
+
+
 
 /* Target the whole scrollbar */
 ::-webkit-scrollbar {
@@ -247,4 +277,3 @@ body{
 ::-webkit-scrollbar-thumb:hover {
     background-color: #555;
 }
-    
