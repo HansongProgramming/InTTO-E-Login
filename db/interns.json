@@ -1,50 +1,26 @@
 {
-  "Ritz Madueno": {
-    "honorifics": "Mr.",
+  "Joe Moment": {
     "suffix": "",
-    "email": "ritzmoment@gmail.com",
-    "address": "CITCS"
-  },
-  "Augnina Reburiano": {
-    "honorifics": "Ms.",
-    "suffix": "",
-    "email": "augninamoment@gmail.com",
-    "address": "CITCS"
-  },
-  "Hans Flores": {
+    "full name": "Joe Moment",
+    "email": "moment@gmail.com",
+    "address": "CITCS",
     "honorifics": "Mr.",
-    "suffix": "",
-    "email": "hansmoment@gmail.com",
-    "address": "CITCS"
+    "status": "Time-Out"
   },
-  "Johann Liwag": {
-    "honorifics": "Mr.",
+  "John Cement": {
     "suffix": "",
-    "email": "trulythemoment@gmail.com",
-    "address": "CITCS"
-  },
-  "Rodrigo Maglatang": {
+    "full name": "John Cement",
+    "email": "cemoment@gmail.com",
+    "address": "CBA",
     "honorifics": "Mr.",
-    "suffix": "Jr.",
-    "email": "rodrigomoment@gmail.com",
-    "address": "CITCS"
+    "status": "Time-In"
   },
-  "Duane Tauli": {
-    "honorifics": "Mr.",
+  "Han": {
     "suffix": "",
-    "email": "duanemoment@gmail.com",
-    "address": "CITCS"
-  },
-  "Kim Ongchangco": {
+    "full name": "Han",
+    "email": "hanmoment@gmail.com",
+    "address": "habibi",
     "honorifics": "Mr.",
-    "suffix": "",
-    "email": "kimoment@gmail.com",
-    "address": "CITCS"
-  },
-  "Lark Orillos": {
-    "honorifics": "Mr.",
-    "suffix": "",
-    "email": "larkmoment@gmail.com",
-    "address": "CITCS"
+    "status": "Time-In"
   }
 }

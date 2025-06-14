@@ -59,11 +59,11 @@ app.post('/api/internList', (req, res) => {
       return res.status(400).json({ error: 'Missing full name in data' });
     }
 
+    const existingData = internList[fullName] || {};
+
     internList[fullName] = {
-      honorifics: newIntern.honorifics,
-      suffix: newIntern.suffix,
-      email: newIntern.email,
-      address: newIntern.address,
+      ...existingData,
+      ...newIntern
     };
 
     fs.writeFile(filePath, JSON.stringify(internList, null, 2), 'utf8', (err) => {

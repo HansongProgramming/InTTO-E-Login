@@ -92,6 +92,7 @@
     const form = document.getElementById("user-registry");
     const searchBar = document.getElementById("search-bar");
     const listContainer = document.getElementById("list");
+    const toggleButton = document.getElementById('toggle-status');
 
     window.onload = async () => {
       const interns = await getInternList();
@@ -111,7 +112,7 @@
       }
     }
 
-    async function updateInternList(data) {
+    async function updateInternList(data, reRender = true) {
       try {
         const response = await fetch(INTERN_LIST_URL, {
           method: "POST",
@@ -123,8 +124,10 @@
 
         console.log("Intern list updated successfully");
 
-        const interns = await getInternList();
-        if (interns) renderInterns(interns);
+        if(reRender){
+          const interns = await getInternList();
+          if (interns) renderInterns(interns);
+        }
       } catch (err) {
         console.error("Error updating intern list:", err);
       }
@@ -137,6 +140,8 @@
         const personDiv = document.createElement("div");
         personDiv.className = "person";
 
+        const userStatus = info.status === "Time-In" ? "Time-out" : "Time-in";
+
         personDiv.innerHTML = `
           <div class="person-top">
             <p>${info.honorifics || "Mr."} ${name} ${info.suffix || ""}</p>
@@ -144,7 +149,12 @@
           </div>
           <div class="person-bottom">
             <p>${info.address || "No address"}</p>
-            <button class="Time">Time-in</button>
+            <button 
+              class="Time" 
+              data-name="${name}" 
+              data-status="${info.status || "Time-Out"}">
+              ${userStatus}
+            </button>
           </div>
         `;
 
@@ -152,27 +162,51 @@
       });
     }
 
-    form.addEventListener("submit", function (event) {
+    function getTime(){
+      const theMoment = moment();
+      const timeEl = document.getElementById('curr-time');
+
+      if (timeEl) timeEl.textContent = theMoment.format('hh:mm');
+      // if (timeEl) timeEl.textContent = theMoment.format('hh:mm a');
+    }
+
+    listContainer.addEventListener("click", async (event) => {
+      if (event.target.classList.contains("Time")) {
+        const button = event.target;
+        const intern = button.dataset.name;
+        const currentStatus = button.dataset.status || "Time-Out";
+        const newStatus = currentStatus === "Time-In" ? "Time-Out" : "Time-In";
+
+        console.log(`Time-in clicked for: ${intern}`);
+
+        button.dataset.status = newStatus;
+        button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
+
+        updateInternList({
+          "full name": intern,
+          "status" : newStatus
+        }, false)
+          .then(() => `Updated user: ${intern}`)
+          .catch(err => console.log(err));
+      }
+    });
+
+
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
 
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
-      // defaulting of null values
       data.honorifics = data.honorifics || "Mr.";
       data.suffix = data.suffix || "";
+
+      data.status = "Time-In";
 
       updateInternList(data);
       form.reset();
     });
 
-    function getTime(){
-      const theMoment = moment();
-      const timeEl = document.getElementById('curr-time');
-
-      if (timeEl) timeEl.textContent = theMoment.format('HH:mm');
-      // if (timeEl) timeEl.textContent = theMoment.format('HH:mm a');
-    }
 
     searchBar.addEventListener("input", async () => {
       const searchTerm = searchBar.value.toLowerCase();
