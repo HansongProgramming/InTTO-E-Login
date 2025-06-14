@@ -79,8 +79,8 @@ app.post('/api/internList', (req, res) => {
 
 
 module.exports = function startServer() {
-  app.listen(PORT, "0.0.0.0" || "localhost" ,() => {
+  app.listen(PORT, "0.0.0.0",() => {
     console.log(`Listening to requests on http://${"192.168.0.87" || "localhost"}:${PORT}`);
-    });
+  });
 };
 
