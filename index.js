@@ -1,62 +1,74 @@
+const API_KEY = 'b6b04c176aef4bf7a8f11122250706';
+const CITY = 'Baguio';
+const BUTTON_IDS = ['internlogin', 'guestlogin', 'adminlogin'];
+
+
 async function getWeather() {
-    const city = 'Baguio';
-    const API_KEY = 'b6b04c176aef4bf7a8f11122250706';
-    const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${city}`;
+  const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CITY}`;
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        const temperature = data.current.temp_c;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Network response was not ok');
 
-        return temperature;
-    } catch (err) {
-        console.error('Error fetching weather data:', err);
-    }
+    const data = await response.json();
+    return data.current.temp_c;
+  } catch (err) {
+    console.error('Error fetching weather data:', err);
+    return null;
+  }
 }
 
-setInterval(() => {
-    const moment = moment();
+async function renderWeatherDateTime() {
+  const theMoment = moment();
 
-    const currentDate = moment.format('DD/MM/YYYY');
-    const currentTime = moment.format('HH:mm');
+  const dateEl = document.getElementById('date');
+  const timeEl = document.getElementById('time');
+  const weatherEl = document.getElementById('weather');
 
-    const dateElement = document.getElementById('date');
-    const timeElement = document.getElementById('time');
-    const weatherElement = document.getElementById('weather');
+  if (dateEl) dateEl.textContent = theMoment.format('DD/MM/YYYY');
+  if (timeEl) timeEl.textContent = theMoment.format('HH:mm');
 
-    dateElement.textContent = currentDate;
-    timeElement.textContent = currentTime;
+  const temperature = await getWeather();
+  if (weatherEl) {
+    weatherEl.textContent = temperature !== null ? `${temperature}°C` : 'Weather unavailable';
+  }
+}
 
-    getWeather().then(temperature => {
-        if (temperature !== undefined) {
-            weatherElement.textContent = `${temperature}°C`;
-        } else {
-            console.log('Could not retrieve the temperature.');
-        }
-    }).catch(err => {
-        console.error('Error:', err);
-    });
+function toggleMomentElements() {
+  const momentEl = document.getElementById('moment');
+  const spontaneousEl = document.getElementById('spontaneous');
 
-}, 15000);
+  if (!momentEl || !spontaneousEl) return;
 
+  const isHidden = momentEl.style.display === 'none' || momentEl.style.display === '';
 
-setInterval(() => {
-    const momentElement = document.getElementById('moment');
-    const spontaneousElement = document.getElementById('spontaneous');
-    const currentDisplay = momentElement.style.display;
+  momentEl.style.display = isHidden ? 'block' : 'none';
+  spontaneousEl.style.display = isHidden ? 'block' : 'none';
 
-    if (currentDisplay === 'none' || currentDisplay === '') {
-        spontaneousElement.style.display = 'block';
-        momentElement.style.display = 'block';
-        setTimeout(() => {
-            spontaneousElement.style.display = 'none';
-            momentElement.style.display = 'none';
-        }, 4000);
-    } else {
-        spontaneousElement.style.display = 'none';
-        momentElement.style.display = 'none';
+  if (isHidden) {
+    setTimeout(() => {
+      momentEl.style.display = 'none';
+      spontaneousEl.style.display = 'none';
+    }, 4000);
+  }
+}
+
+function setupLoginButtons() {
+  BUTTON_IDS.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        window.location.href = `${id}.html`;
+      });
     }
-}, 900000);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupLoginButtons();
+  renderWeatherDateTime();
+  toggleMomentElements();
+
+  setInterval(renderWeatherDateTime, 15000);
+  setInterval(toggleMomentElements, 900000);
+});

@@ -1,30 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>E-Login Moment</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="main.css" />
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="lights"></div>
     <div class="main">
-        <div class="session-page-main">
-            <div class="E-login">elogmoment</div>
-            <div class="Calendar">
-                <div class="time" id="time"></div>
-                <div class="date" id="date"></div>
-                <div class="weather" id="weather"></div>
-            </div>
-            <div class="rate">ratemoment</div>
-            <div class="contacts">contentmoment</div>
+      <div class="session-page-main">
+        <div class="E-login" style="color: white">
+          <div id="internlogin">Intern</div>
+          <div id="guestlogin">Guest</div>
+          <div id="adminlogin">Admin</div>
         </div>
+        <div class="Calendar">
+          <div class="time" id="time"></div>
+          <div class="date" id="date"></div>
+          <div class="weather" id="weather"></div>
+        </div>
+        <div class="rate">ratemoment</div>
+        <div class="contacts">contentmoment</div>
+      </div>
     </div>
     <div class="moment" id="moment">MOMENT</div>
     <div class="spontaneous" id="spontaneous">SPONTANEOUS</div>
-    <script src="./index.js"></script>
-</body>
+    <script src="./index.js">
+    </script>
+  </body>
 </html>

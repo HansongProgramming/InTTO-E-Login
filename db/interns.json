@@ -1,14 +1,50 @@
 {
-  "Johann Moment": {
+  "Ritz Madueno": {
+    "honorifics": "Mr.",
+    "suffix": "",
+    "email": "ritzmoment@gmail.com",
+    "address": "CITCS"
+  },
+  "Augnina Reburiano": {
+    "honorifics": "Ms.",
+    "suffix": "",
+    "email": "augninamoment@gmail.com",
+    "address": "CITCS"
+  },
+  "Hans Flores": {
+    "honorifics": "Mr.",
+    "suffix": "",
+    "email": "hansmoment@gmail.com",
+    "address": "CITCS"
+  },
+  "Johann Liwag": {
     "honorifics": "Mr.",
     "suffix": "",
     "email": "trulythemoment@gmail.com",
     "address": "CITCS"
   },
-  "Johann": {
-    "honorifics": "",
+  "Rodrigo Maglatang": {
+    "honorifics": "Mr.",
+    "suffix": "Jr.",
+    "email": "rodrigomoment@gmail.com",
+    "address": "CITCS"
+  },
+  "Duane Tauli": {
+    "honorifics": "Mr.",
     "suffix": "",
-    "email": "trulythemoment@gmail.com",
-    "address": "Moment"
+    "email": "duanemoment@gmail.com",
+    "address": "CITCS"
+  },
+  "Kim Ongchangco": {
+    "honorifics": "Mr.",
+    "suffix": "",
+    "email": "kimoment@gmail.com",
+    "address": "CITCS"
+  },
+  "Lark Orillos": {
+    "honorifics": "Mr.",
+    "suffix": "",
+    "email": "larkmoment@gmail.com",
+    "address": "CITCS"
   }
 }

@@ -1,180 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Intern Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div class="lights"></div>
-        <div class="login-page">
-            <div class="registration-container">
-                <div class="header">
-                    <img src="images/InTTO_Logo_White.svg" alt="">
-                    <h1>05:08</h1>
-                </div>
-                <div class="registration">
-                    <form class="user-registry" id="user-registry">
-                        <h1>Intern Registration:</h1>
-                        <div class="selection">
-                            <label for="honorifics">Honorifics</label>
-                            <select name="honorifics" id="">
-                                <option value="None">Ex: Mr.</option>
-                                <option value="Mr.">Mr.</option>
-                                <option value="Ms.">Ms.</option>
-                            </select>
-                            <label for="suffix">Suffix</label>
-                            <select name="suffix" id="">
-                                <option value="None">Ex: Jr. Sr.</option>
-                                <option value="Jr.">Jr.</option>
-                                <option value="Sr.">Sr.</option>
-                                <option value="II">II</option>
-                            </select>
-                        </div>
-                        <input type="text" name="full name" id="" placeholder="First Name   M.I.  Last Name">
-                        <input type="email" name="email" id="" placeholder="emailaddress@students.uc-bcf.edu.ph">
-                        <input type="text" name="address" id="" placeholder="School, Department, or Company Name">
-                        <input type="submit" value="Submit Details" class="submit" />
-                    </form>
-                </div>
-            </div>
-            <div class="intern-list">
-                <div class="search">
-                    <input type="search" name="" id="search-bar" placeholder="Search Name">
-                </div>
-                <div class="list" id="list">
-                    <div class="person">
-                        <div class="person-top">
-                            <p>Juan F. Dela Cruzes</p>
-                            <p>96 Hours</p>
-                        </div>
-                        <div class="person-bottom">
-                            <p>College</p>
-                            <button class="Time">Time-in</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="login-page">
+      <div class="registration-container">
+        <div class="header">
+          <img src="images/InTTO_Logo_White.svg" alt="" />
+          <h1 id="curr-time"></h1>
         </div>
+        <div class="registration">
+          <form class="user-registry" id="user-registry">
+            <h1>Intern Registration:</h1>
+            <div class="selection">
+              <label for="honorifics">Honorifics</label>
+              <select name="honorifics" id="">
+                <option value="" selected disabled>Ex: Mr.</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Ms.">Ms.</option>
+              </select>
+              <label for="suffix">Suffix</label>
+              <select name="suffix" id="">
+                <option value="" selected>Ex: Jr. Sr.</option>
+                <option value="Jr.">Jr.</option>
+                <option value="Sr.">Sr.</option>
+                <option value="II">II</option>
+              </select>
+            </div>
+            <input
+              type="text"
+              name="full name"
+              id=""
+              placeholder="First Name   M.I.  Last Name"
+            />
+            <input
+              type="email"
+              name="email"
+              id=""
+              placeholder="emailaddress@students.uc-bcf.edu.ph"
+            />
+            <input
+              type="text"
+              name="address"
+              id=""
+              placeholder="School, Department, or Company Name"
+            />
+            <input type="submit" value="Submit Details" class="submit" />
+          </form>
+        </div>
+      </div>
+      <div class="intern-list">
+        <div class="search">
+          <input
+            type="search"
+            name=""
+            id="search-bar"
+            placeholder="Search Name"
+          />
+        </div>
+        <div class="list" id="list">
+          <div class="person">
+            <div class="person-top">
+              <p>Juan F. Dela Cruzes</p>
+              <p>96 Hours</p>
+            </div>
+            <div class="person-bottom">
+              <p>College</p>
+              <button class="Time">Time-in</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <script>
-        const form = document.getElementById('user-registry');
-        const searchBar = document.getElementById('search-bar');
+    const API_BASE_URL = "http://192.168.0.87:3000/api";
+    const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 
-        let internList = {};
+    const form = document.getElementById("user-registry");
+    const searchBar = document.getElementById("search-bar");
+    const listContainer = document.getElementById("list");
 
-        fetch('./db/interns.json')
-            .then(response => response.json())
-            .then(data => { internList = data; })
-            .catch(error => console.error('Error fetching interns:', error));
+    window.onload = async () => {
+      const interns = await getInternList();
+      if (interns) renderInterns(interns);
+      getTime();
 
-        // console.log(internList);
+      setInterval(getTime, 15000);
+    };
 
+    async function getInternList() {
+      try {
+        const response = await fetch(INTERN_LIST_URL);
+        if (!response.ok) throw new Error("Failed to fetch intern list");
+        return await response.json();
+      } catch (err) {
+        console.error("Error fetching intern list:", err);
+      }
+    }
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            internList[data['full name']] = {
-                "honorifics": data['honorifics'],
-                "suffix": data['suffix'],
-                "email": data['email'],
-                "address": data['address']
-            };
-
-            updateInternList(internList);
-            form.reset();
+    async function updateInternList(data) {
+      try {
+        const response = await fetch(INTERN_LIST_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
         });
 
-        searchBar.addEventListener('input', function () {
-            const searchTerm = searchBar.value.toLowerCase();
-            const listContainer = document.getElementById('list');
+        if (!response.ok) throw new Error("Failed to update intern list");
 
-            const interns = getInternList().then(interns => {
-                listContainer.innerHTML = '';
+        console.log("Intern list updated successfully");
 
-                Object.keys(interns).forEach(name => {
-                    if (name.toLowerCase().includes(searchTerm)) {
-                        const personDiv = document.createElement('div');
-                        personDiv.className = 'person';
-                        personDiv.innerHTML = `
-                            <div class="person-top">
-                                <p>${interns[name].honorifics} ${name} ${interns[name].suffix}</p>
-                                <p>${interns[name].hours || '0'} Hours</p>
-                            </div>
-                            <div class="person-bottom">
-                                <p>${interns[name].address}</p>
-                                <button class="Time">Time-in</button>
-                            </div>
-                        `;
-                        listContainer.appendChild(personDiv);
-                    }
-                });
-            }).catch(err => console.error('Error fetching intern list:', err));
-        });
+        const interns = await getInternList();
+        if (interns) renderInterns(interns);
+      } catch (err) {
+        console.error("Error updating intern list:", err);
+      }
+    }
 
-        async function getInternList() {
-            try {
-                const response = await fetch('http://192.168.0.147:3000/api/internList');
-                const result = await response.json();
+    function renderInterns(interns) {
+      listContainer.innerHTML = "";
 
-                return result;
-            } catch (err) {
-                console.error('Error fetching intern list:', err);
-            }
-        }
+      Object.entries(interns).forEach(([name, info]) => {
+        const personDiv = document.createElement("div");
+        personDiv.className = "person";
 
-        async function updateInternList(data) {
-            try {
-                const response = await fetch('http://192.168.0.147:3000/api/internList', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
+        personDiv.innerHTML = `
+          <div class="person-top">
+            <p>${info.honorifics || "Mr."} ${name} ${info.suffix || ""}</p>
+            <p>${info.hours || "0"} Hours</p>
+          </div>
+          <div class="person-bottom">
+            <p>${info.address || "No address"}</p>
+            <button class="Time">Time-in</button>
+          </div>
+        `;
 
-                if (!response.ok) throw new Error('Failed to update intern list');
+        listContainer.appendChild(personDiv);
+      });
+    }
 
-                console.log('Intern list updated successfully');
-            } catch (err) {
-                console.error('Error:', err);
-            }
-        }
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-        function renderInterns(interns) {
-            const listContainer = document.getElementById('list');
-            listContainer.innerHTML = '';
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
-            Object.keys(interns).forEach(name => {
-                const personDiv = document.createElement('div');
-                personDiv.className = 'person';
-                personDiv.innerHTML = `
-                    <div class="person-top  ">
-                        <p>${interns[name].honorifics} ${name} ${interns[name].suffix}</p>
-                        <p>${interns[name].hours || '0'} Hours</p>  
-                    </div>
-                    <div class="person-bottom">
-                        <p>${interns[name].address}</p>
-                        <button class="Time">Time-in</button>
-                    </div>
-                `;
-                listContainer.appendChild(personDiv);
-            });
-        }
+      // defaulting of null values
+      data.honorifics = data.honorifics || "Mr.";
+      data.suffix = data.suffix || "";
 
-        window.onload = async () => {
-            const interns = await getInternList();
-            if (interns) {
-                renderInterns(interns);
-            }
-        };
-    </script>
-</body>
+      updateInternList(data);
+      form.reset();
+    });
 
+    function getTime(){
+      const theMoment = moment();
+      const timeEl = document.getElementById('curr-time');
+
+      if (timeEl) timeEl.textContent = theMoment.format('HH:mm');
+      // if (timeEl) timeEl.textContent = theMoment.format('HH:mm a');
+    }
+
+    searchBar.addEventListener("input", async () => {
+      const searchTerm = searchBar.value.toLowerCase();
+
+      const interns = await getInternList();
+      if (!interns) return;
+
+      const filtered = Object.fromEntries(
+        Object.entries(interns).filter(([name]) =>
+          name.toLowerCase().includes(searchTerm)
+        )
+      );
+
+      renderInterns(filtered);
+    });
+  </script>
+  </body>
 </html>

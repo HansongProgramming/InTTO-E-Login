@@ -35,20 +35,52 @@ app.get('/api/internList', (req, res) => {
   });
 });
 
+
 app.post('/api/internList', (req, res) => {
   const filePath = path.join(__dirname, '../db/interns.json');
-  const updatedData = JSON.stringify(req.body, null, 2);
+  const newIntern = req.body;
 
-  fs.writeFile(filePath, updatedData, 'utf8', (err) => {
+  fs.readFile(filePath, 'utf8', (err, fileData) => {
     if (err) {
-      console.error('Error writing file:', err);
-      return res.status(500).json({ error: 'Failed to write file' });
+      console.error('Error reading file:', err);
+      return res.status(500).json({ error: 'Failed to read file' });
     }
-    res.status(200).json({ message: 'Intern list updated successfully' });
+
+    let internList = {};
+
+    try {
+      internList = JSON.parse(fileData);
+    } catch (parseErr) {
+      console.error('Error parsing JSON:', parseErr);
+    }
+
+    const fullName = newIntern['full name'];
+    if (!fullName) {
+      return res.status(400).json({ error: 'Missing full name in data' });
+    }
+
+    internList[fullName] = {
+      honorifics: newIntern.honorifics,
+      suffix: newIntern.suffix,
+      email: newIntern.email,
+      address: newIntern.address,
+    };
+
+    fs.writeFile(filePath, JSON.stringify(internList, null, 2), 'utf8', (err) => {
+      if (err) {
+        console.error('Error writing file:', err);
+        return res.status(500).json({ error: 'Failed to write file' });
+      }
+
+      res.status(200).json({ message: 'Intern list updated successfully' });
+    });
   });
 });
 
 
-app.listen(PORT, "0.0.0.0" || "localhost" ,() => {
-  console.log(`Listening to requests on http://${"192.168.0.147" || "localhost"}:${PORT}`);
-});
+module.exports = function startServer() {
+  app.listen(PORT, "0.0.0.0" || "localhost" ,() => {
+    console.log(`Listening to requests on http://${"192.168.0.87" || "localhost"}:${PORT}`);
+    });
+};
+

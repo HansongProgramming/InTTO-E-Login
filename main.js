@@ -1,34 +1,37 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow } = require("electron");
+const path = require("path");
 
-const isMac = process.platform === 'darwin';
+const startServer = require("./server/app");
+const isMac = process.platform === "darwin";
 
 function createWindow() {
-    const mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 576,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        }
-    });
+  const mainWindow = new BrowserWindow({
+    width: 1920,
+    height: 1080,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    autoHideMenuBar: true,
+  });
 
-    mainWindow.loadFile(path.join(__dirname, 'sessionPage.html'));
+  mainWindow.loadFile(path.join(__dirname, "sessionPage.html"));
+  mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
-    createWindow();
+  startServer();
+  createWindow();
 
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-    });
-
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
 });
 
-app.on('window-all-closed', () => {
-    if (!isMac) {
-        app.quit();
-    }
+app.on("window-all-closed", () => {
+  if (!isMac) {
+    app.quit();
+  }
 });
