@@ -133,6 +133,50 @@
       }
     }
 
+    async function editIntern(fullName, updates, reRender = true) {
+      try {
+        const encodedName = encodeURIComponent(fullName);
+        const response = await fetch(`http://192.168.0.87:3000/editIntern/${encodedName}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
+
+        if (!response.ok) throw new Error("Failed to edit intern");
+
+        console.log(`Intern '${fullName}' updated successfully`);
+
+        if (reRender) {
+          const interns = await getInternList();
+          if (interns) renderInterns(interns);
+        }
+      } catch (err) {
+        console.error("Error editing intern:", err);
+      }
+    }
+
+    async function deleteIntern(fullName, reRender = true){
+      try {
+        const encodedName = encodeURIComponent(fullName);
+        const response = await fetch(
+          `http://192.168.0.87:3000/deleteIntern/${encodedName}`, {
+            method: "DELETE"
+          });
+        
+        if (!response.ok) throw new Error("Failed to delete intern");
+
+        console.log(`Intern '${fullName}' deleted successfully`);
+
+        if (reRender) {
+          const interns = await getInternList();
+          if (interns) renderInterns(interns);
+        }
+      } catch (err) {
+        console.error("Error deleting intern:", err);
+      }
+    }
+
+
     function renderInterns(interns) {
       listContainer.innerHTML = "";
 
@@ -163,11 +207,12 @@
     }
 
     function getTime(){
-      const theMoment = moment();
       const timeEl = document.getElementById('curr-time');
 
-      if (timeEl) timeEl.textContent = theMoment.format('hh:mm');
-      // if (timeEl) timeEl.textContent = theMoment.format('hh:mm a');
+      if (timeEl) {
+        const now = moment();
+        timeEl.textContent = now.format('hh:mm A');
+      }
     }
 
     listContainer.addEventListener("click", async (event) => {
@@ -182,11 +227,8 @@
         button.dataset.status = newStatus;
         button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
 
-        updateInternList({
-          "full name": intern,
-          "status" : newStatus
-        }, false)
-          .then(() => `Updated user: ${intern}`)
+        editIntern(intern, { status: newStatus }, false)
+          .then(() => console.log(`Updated user: ${intern}`))
           .catch(err => console.log(err));
       }
     });
@@ -202,7 +244,13 @@
       data.suffix = data.suffix || "";
 
       data.status = "Time-In";
+      
+      if(!data.timeIn) {
+        const now = moment();
+        data.timeIn = now.format('hh:mm a');
+      }
 
+      console.log(data);
       updateInternList(data);
       form.reset();
     });
