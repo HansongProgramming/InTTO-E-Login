@@ -2,7 +2,6 @@ const API_KEY = 'b6b04c176aef4bf7a8f11122250706';
 const CITY = 'Baguio';
 const BUTTON_IDS = ['internlogin', 'guestlogin', 'adminlogin'];
 
-
 async function getWeather() {
   const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CITY}`;
 
@@ -11,7 +10,11 @@ async function getWeather() {
     if (!response.ok) throw new Error('Network response was not ok');
 
     const data = await response.json();
-    return data.current.temp_c;
+    return {
+      temp: data.current.temp_c,
+      icon: `https:${data.current.condition.icon}`,
+      text: data.current.condition.text
+    };
   } catch (err) {
     console.error('Error fetching weather data:', err);
     return null;
@@ -28,9 +31,16 @@ async function renderWeatherDateTime() {
   if (dateEl) dateEl.textContent = theMoment.format('DD/MM/YYYY');
   if (timeEl) timeEl.textContent = theMoment.format('HH:mm');
 
-  const temperature = await getWeather();
+  const weather = await getWeather();
   if (weatherEl) {
-    weatherEl.textContent = temperature !== null ? `${temperature}°C` : 'Weather unavailable';
+    if (weather !== null) {
+      weatherEl.innerHTML = `
+        <img src="${weather.icon}" alt="${weather.text}">
+        <span>${weather.temp}°C</span>
+      `;
+    } else {
+      weatherEl.textContent = 'Weather unavailable';
+    }
   }
 }
 

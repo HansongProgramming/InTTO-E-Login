@@ -3,10 +3,15 @@
 :root {
   --background_green: #0f803e;
   --background_black: #101318;
-  --containers: linear-gradient(to right, #2a2a2a90 20%, #9f9f9f30 80%);
+  --containers: linear-gradient(to right, #18171790 20%, #58535c30 80%);
   --whitenesscolor: white;
   --font-poppins: "Poppins", sans-serif;
 }
+
+* {
+  box-sizing: border-box;
+}
+
 
 body {
   background-color: #101318;
@@ -21,22 +26,11 @@ body {
   position: absolute;
   top: 20%;
   left: 20%;
-  transform: rotate(0deg) translateX(50%) translateY(-50%);
-  transform-origin: center center;
   filter: blur(30rem);
   border-radius: 100%;
   z-index: -1;
-  animation: orbit 10s linear infinite;
 }
 
-@keyframes orbit {
-  0% {
-    transform: rotate(0deg) translateX(50%) translateY(-50%);
-  }
-  100% {
-    transform: rotate(360deg) translateX(50%) translateY(-50%);
-  }
-}
 
 .main {
   width: 100vw;
@@ -44,50 +38,174 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: var(--font-poppins);
+  color: var(--whitenesscolor);
 }
+
+
+
 
 /* ------------------------- sessionPage.html ---------------- */
 
 .session-page-main {
-  display: grid;
-  width: 60%;
-  height: 80%;
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  height: 60%;
   gap: calc(1.5vh);
-  grid-template-areas:
-    "login calendar calendar"
-    "login calendar calendar"
-    "login calendar calendar"
-    "rate calendar calendar"
-    "rate contacts contacts";
+}
+
+.left-side {
+  width: 40%;
+  gap: calc(1.5vh);
+  display: flex;
+  flex-direction: column;
+}
+
+.right-side {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.5vh);
 }
 
 .E-login {
-  background-color: var(--containers);
+  background-image: var(--containers);
   border: solid white 0.5px;
   border-radius: 15px;
-  grid-area: login;
+  height: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.Calendar {
-  background-color: var(--containers);
-  border: solid white 0.5px;
-  border-radius: 15px;
-  grid-area: calendar;
+.loginheadermessage{
+  font-size: clamp(1rem, 5vw, 3rem);
 }
-/* IM MOMENTING IT */
+
+.loginhead{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.uc{
+  width: 5vw;
+}
+
+.intto{
+  width: 8vw;
+}
+
+#internlogin, #guestlogin, #adminlogin{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-selection{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1vw;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+.login-selection img{
+  width: clamp(1rem, 5vw, 10rem);
+}
+
 .rate {
-  background-color: var(--containers);
+  background-image: var(--containers);
   border: solid white 0.5px;
   border-radius: 15px;
-  grid-area: rate;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.rate h2{
+  font-size: clamp(0.1vw, 1vw, 2vw);
+  margin: 0;
+  padding: 0;
+}
+
+.main-QR {
+  width: 10vw;
+}
+
+
+.Calendar {
+  background-image: var(--containers);
+  border: solid white 0.5px;
+  border-radius: 15px;
+  height: 80%;
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  flex-direction: column;
+}
+
+.time{
+  display: inline-block;
+  font-size: clamp(3rem, 15vw, 20rem);
+  font-weight: 100;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  height: max-content;
+  line-height: 1;
+  align-self: center;
+}
+
+.date{
+  font-size: clamp(1rem, 5vw, 6rem);
+  font-weight: 100;
+    line-height: 1;
+      align-self: center;
+}
+
+.weather{
+  font-size: clamp(1rem, 3vw, 6rem);
+  font-weight: 100;
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.weather img{
+  width: clamp(1rem,5vw,5rem);
+  height: clamp(1rem,5vw,5rem);
+  margin-right: clamp(1rem,8vw,20rem);
+  align-self: center;
 }
 
 .contacts {
-  background-color: var(--containers);
+  background-image: var(--containers);
   border: solid white 0.5px;
   border-radius: 15px;
-  grid-area: contacts;
+  height: 20%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
+
+.instagram, .facebook, .mail, .phone{
+  font-size: clamp(1rem, 0.5vw,2rem);
+  display: flex;
+  align-items: center;
+  width: 40%;
+  margin-left: 2vw;
+}
+
+.contacts img{
+  width: 2vw;
+}
+
 
 .moment,
 .spontaneous {
@@ -100,6 +218,7 @@ body {
 .moment {
   right: 0;
 }
+
 .spontaneous {
   left: 0;
 }
@@ -172,131 +291,134 @@ body {
   font-size: 3rem;
 }
 
-.user-registry input{
-    outline: none;
-    background-color: transparent;
-    border: none;
-    border-bottom: 1px solid grey;
-    font-size: 1.2rem;
-    color: white;
-    font-family: var(--font-poppins);
+.user-registry input {
+  outline: none;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid grey;
+  font-size: 1.2rem;
+  color: white;
+  font-family: var(--font-poppins);
 }
 
-.user-registry .submit{
-    border: none;
-    color: white;
+.user-registry .submit {
+  border: none;
+  color: white;
 }
 
-.selection select{
-    background-color: transparent;
-    padding: 0.5rem;
-    color: white;
-    border-radius: 8px;
-    margin-right: 1.2rem;
+.selection select {
+  background-color: transparent;
+  padding: 0.5rem;
+  color: white;
+  border-radius: 8px;
+  margin-right: 1.2rem;
 }
 
 
 
 option {
-  color: white;        
-  background-color: black; 
+  color: white;
+  background-color: black;
 }
 
 .intern-list {
-display: flex;
+  display: flex;
   height: calc(63.88%);
   width: 25%;
   border-radius: 15px;
   border: white 1px solid;
   background-image: var(--containers);
-flex-direction: column;
+  flex-direction: column;
 }
 
-.search{
-    width: 100%;
+.search {
+  width: 100%;
 }
 
-.search input{
-    width: 90%;
-    margin: 1vw;
-    border-radius: 15px;
-    padding: 0.5vw;
-    background-color: rgba(0,0,0,0);
-    color: white;
-    border: solid 1px white;
+.search input {
+  width: 90%;
+  margin: 1vw;
+  border-radius: 15px;
+  padding: 0.5vw;
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border: solid 1px white;
 }
 
-.list{
-    width: 90%;
-    margin: 0 auto;
-    height: 80%;
-    overflow-y: scroll;
+.list {
+  width: 90%;
+  margin: 0 auto;
+  height: 80%;
+  overflow-y: scroll;
 }
 
-.person{
-    width: 100%;
-    border-top: solid white 1px;
-    border-bottom: solid white 1px;
-    display: flex;
-    flex-direction: column;
-    color: white;
-    font-size: 1.2rem;
+.person {
+  width: 100%;
+  border-top: solid white 1px;
+  border-bottom: solid white 1px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-size: 1.2rem;
 }
 
-.person-top{
-    display: flex;
-    margin-right: 1.5rem;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 0;
+.person-top {
+  display: flex;
+  margin-right: 1.5rem;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 0;
 }
 
-.person-bottom{
-    margin-top: 0;
-    margin-right: 1.5rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+.person-bottom {
+  margin-top: 0;
+  margin-right: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .person-bottom button {
-    background-color: var(--containers);
-    color: white;
-    border: solid white 1px;
-    border-radius: 15px;
-    height: 2rem;
-    font-size: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: var(--containers);
+  color: white;
+  border: solid white 1px;
+  border-radius: 15px;
+  height: 2rem;
+  font-size: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .person-bottom button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px white;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px white;
 }
 
 
 
 /* Target the whole scrollbar */
 ::-webkit-scrollbar {
-    width: 5px;              /* vertical scrollbar width */
-    height: 30%;             /* horizontal scrollbar height */
+  width: 5px;
+  /* vertical scrollbar width */
+  height: 30%;
+  /* horizontal scrollbar height */
 }
 
 /* The track (background of scrollbar) */
 ::-webkit-scrollbar-track {
-    background: var(--containers);
-    border-radius: 10px;
+  background: var(--containers);
+  border-radius: 10px;
 }
 
 /* The draggable thumb */
 ::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 10px;
-    border: 3px solid #f0f0f0; /* creates padding around the thumb */
+  background-color: #888;
+  border-radius: 10px;
+  border: 3px solid #f0f0f0;
+  /* creates padding around the thumb */
 }
 
 /* On hover */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
+  background-color: #555;
 }

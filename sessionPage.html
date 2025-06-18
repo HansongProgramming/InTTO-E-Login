@@ -1,34 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Login Moment</title>
-    <link rel="stylesheet" href="main.css" />
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-  </head>
 
-  <body>
-    <div class="lights"></div>
-    <div class="main">
-      <div class="session-page-main">
-        <div class="E-login" style="color: white">
-          <div id="internlogin">Intern</div>
-          <div id="guestlogin">Guest</div>
-          <div id="adminlogin">Admin</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Login Moment</title>
+  <link rel="stylesheet" href="main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+</head>
+
+<body>
+  <div class="lights"></div>
+  <div class="main">
+    <div class="session-page-main">
+        <div class="left-side">
+          <div class="E-login" style="color: white">
+            <div class="loginhead">
+              <img src="images/UC_logo.svg" alt="" class="uc">
+              <img src="images/InTTO_Logo_White.svg" alt="" class="intto">
+            </div>
+            <h1 class="loginheadermessage">E-Login</h1>
+            <div class="login-selection">
+              <div id="internlogin">
+                <img src="images/intern.svg" alt="">
+                Intern
+              </div>
+              <div id="guestlogin">
+                <img src="images/Guest.svg" alt="">
+                Guest</div>
+              <div id="adminlogin">
+                <img src="images/admin.svg" alt="">
+                Admin</div>
+            </div>
+            </div>
+            <div class="rate">
+            <h2>Rate our services!</h2>
+            <img src="images/QR.svg" alt="" class="main-QR">
+            </div>
         </div>
-        <div class="Calendar">
-          <div class="time" id="time"></div>
-          <div class="date" id="date"></div>
-          <div class="weather" id="weather"></div>
+
+        <div class="right-side">
+          <div class="Calendar">
+            <div class="time" id="time"></div>
+            <div class="date" id="date"></div>
+            <div class="weather" id="weather"></div>
+          </div>
+          <div class="contacts">
+            <div class="instagram">
+              <img src="images/Instagram.svg" alt="">
+              @uc.intto
+            </div>
+            <div class="facebook">
+              <img src="images/Facebook.svg" alt="">
+              @UCInTTO
+            </div>
+            <div class="mail">
+              <img src="images/Letter.svg" alt="">
+              intto@uc-bcf.edu.ph
+            </div>
+            <div class="phone">
+              <img src="images/Phone Squared.svg" alt="">
+              (074) 442-3316 loc. 303
+            </div>
+          </div>
         </div>
-        <div class="rate">ratemoment</div>
-        <div class="contacts">contentmoment</div>
-      </div>
     </div>
-    <div class="moment" id="moment">MOMENT</div>
-    <div class="spontaneous" id="spontaneous">SPONTANEOUS</div>
-    <script src="./index.js">
-    </script>
-  </body>
+
+    </div>
+  </div>
+  <div class="moment" id="moment">MOMENT</div>
+  <div class="spontaneous" id="spontaneous">SPONTANEOUS</div>
+  <script src="./index.js">
+  </script>
+</body>
+
 </html>
