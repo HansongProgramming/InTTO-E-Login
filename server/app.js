@@ -121,30 +121,34 @@ app.delete('/deleteIntern/:name', (req, res) => {
 
 // UPDATE INTERN INFORMATION
 app.patch('/editIntern/:name', (req, res) => {
-  const internName = decodeURIComponent(req.params.name).trim();
+  const oldName = decodeURIComponent(req.params.name).trim();
   const updates = req.body;
 
   fs.readFile(internFilePath, 'utf8', (err, fileData) => {
     if (err) return res.status(500).json({ error: 'Failed to read file' });
-
     let internList = {};
+
     try {
       internList = JSON.parse(fileData);
     } catch {
       return res.status(500).json({ error: 'Invalid JSON format' });
     }
 
-    const intern = internList[internName];
-    if (!intern) return res.status(404).json({ error: `Intern '${internName}' not found` });
+    const existing = internList[oldName];
+    if (!existing)
+      return res.status(404).json({ error: `Intern '${oldName}' not found` });
 
-    internList[internName] = { ...intern, ...updates };
+    const newName = updates['full name']?.trim() || oldName;
 
-    fs.writeFile(internFilePath, JSON.stringify(internList, null, 2), 'utf8', (err) => {
+    if (newName !== oldName && internList[newName]) 
+      return res.status(409).json({ error: `Intern '${newName}' already exists` });
+
+    if (newName !== oldName) delete internList[oldName];
+    internList[newName] = { ...existing, ...updates, 'full name': newName };
+
+    fs.writeFile(internFilePath, JSON.stringify(internList, null, 2), 'utf8', err => {
       if (err) return res.status(500).json({ error: 'Failed to write file' });
-      res.status(200).json({
-        message: `Intern '${internName}' updated`,
-        data: internList[internName]
-      });
+      res.json({ message: `Updated '${oldName}'`, data: internList[newName] });
     });
   });
 });

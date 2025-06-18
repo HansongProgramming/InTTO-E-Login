@@ -15,7 +15,7 @@ function createWindow() {
     autoHideMenuBar: true,
   });
 
-  mainWindow.loadFile(path.join(__dirname, "sessionPage.html"));
+  mainWindow.loadFile(path.join(__dirname, "/pages/sessionpage/sessionPage.html"));
 }
 
 app.whenReady().then(() => {
