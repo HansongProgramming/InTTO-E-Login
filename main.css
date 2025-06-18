@@ -157,7 +157,7 @@ body {
 
 .time{
   display: inline-block;
-  font-size: clamp(3rem, 15vw, 20rem);
+  font-size: clamp(3rem, 6vw, 15rem);
   font-weight: 100;
   margin: 0;
   padding: 0;
@@ -168,7 +168,7 @@ body {
 }
 
 .date{
-  font-size: clamp(1rem, 5vw, 6rem);
+  font-size: clamp(1rem, 10vw, 6.8rem);
   font-weight: 100;
     line-height: 1;
       align-self: center;

@@ -29,7 +29,7 @@ async function renderWeatherDateTime() {
   const weatherEl = document.getElementById('weather');
 
   if (dateEl) dateEl.textContent = theMoment.format('DD/MM/YYYY');
-  if (timeEl) timeEl.textContent = theMoment.format('HH:mm');
+  if (timeEl) timeEl.textContent = theMoment.format('hh:mm A');
 
   const weather = await getWeather();
   if (weatherEl) {
