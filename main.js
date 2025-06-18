@@ -16,7 +16,6 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, "sessionPage.html"));
-  mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
