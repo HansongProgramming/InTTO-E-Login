@@ -30,7 +30,15 @@ app.get('/api/internList', (req, res) => {
     
     try {
       const internList = JSON.parse(data);
-      res.json(internList);
+
+      const enrichedInterns = Object.entries(internList).reduce((acc, [name, intern]) => {
+        const logs = Array.isArray(intern.logs) ? intern.logs : [];
+        const totalHours = calculateCappedTotalHours(logs);
+        acc[name] = { ...intern, totalHours: parseFloat(totalHours.toFixed(2)) };
+        return acc;
+      }, {});
+
+      res.json(enrichedInterns);
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
       res.status(500).send('Internal Server Error');
@@ -45,23 +53,17 @@ app.post('/api/internList', (req, res) => {
   const newIntern = req.body;
 
   fs.readFile(INTERN_FILE, 'utf8', (err, fileData) => {
-    if (err) {
-      console.error('Error reading file:', err);
-      return res.status(500).json({ error: 'Failed to read file' });
-    }
+    if (err) return res.status(500).json({ error: 'Failed to read file' });
 
     let internList = {};
-
     try {
       internList = JSON.parse(fileData);
-    } catch (parseErr) {
-      console.error('Error parsing JSON:', parseErr);
+    } catch {
+      return res.status(500).json({ error: 'Invalid JSON format' });
     }
 
     const fullName = newIntern['full name'];
-    if (!fullName) {
-      return res.status(400).json({ error: 'Missing full name in data' });
-    }
+    if (!fullName) return res.status(400).json({ error: 'Missing full name in data' });
 
     if (internList[fullName]) {
       return res.status(409).json({ error: `Intern '${fullName}' already exists. Use PATCH to edit.` });
@@ -69,33 +71,31 @@ app.post('/api/internList', (req, res) => {
 
     const today = moment().format("YYYY-MM-DD");
     const timeNow = moment().format('hh:mm a');
-    
+
+    const logs = [{
+      date: today,
+      timeIn: timeNow,
+      timeOut: ""
+    }];
+
     internList[fullName] = {
       ...newIntern,
-      logs: [
-        {
-          date: today,
-          timeIn: timeNow,
-          timeOut: ""
-        }
-      ],
-      status: "Time-In"
+      logs,
+      status: "Time-In",
+      totalHours: calculateCappedTotalHours(logs)
     };
 
-    fs.writeFile(INTERN_FILE, JSON.stringify(internList, null, 2), 'utf8', (err) => {
-      if (err) {
-        console.error('Error writing file:', err);
-        return res.status(500).json({ error: 'Failed to write file' });
-      }
+    fs.writeFile(INTERN_FILE, JSON.stringify(internList, null, 2), 'utf8', err => {
+      if (err) return res.status(500).json({ error: 'Failed to write file' });
 
-      res.status(201).json({ 
-        message: `Intern '${fullName}' added`, 
+      res.status(201).json({
+        message: `Intern '${fullName}' added`,
         data: internList[fullName]
       });
-      
     });
   });
 });
+
 
 
 // DELETE INTERN
@@ -151,13 +151,12 @@ app.patch('/editIntern/:name', (req, res) => {
     }
 
     const existing = internList[oldName];
-    if (!existing)
-      return res.status(404).json({ error: `Intern '${oldName}' not found` });
+    if (!existing) return res.status(404).json({ error: `Intern '${oldName}' not found` });
 
     const newName = updates['full name']?.trim() || oldName;
-
-    if (newName !== oldName && internList[newName])
+    if (newName !== oldName && internList[newName]) {
       return res.status(409).json({ error: `Intern '${newName}' already exists` });
+    }
 
     if (!Array.isArray(existing.logs)) existing.logs = [];
 
@@ -177,10 +176,10 @@ app.patch('/editIntern/:name', (req, res) => {
       currentLog.timeOut = updates.timeOut;
     }
 
-    delete updates.logs;
-
-    const { timeIn, timeOut, logs, ...rest } = updates;
+    const { logs, timeIn, timeOut, ...rest } = updates;
     const merged = { ...existing, ...rest, 'full name': newName };
+
+    merged.totalHours = calculateCappedTotalHours(merged.logs);
 
     if (newName !== oldName) delete internList[oldName];
     internList[newName] = merged;
@@ -191,6 +190,7 @@ app.patch('/editIntern/:name', (req, res) => {
     });
   });
 });
+
 
 
 // GET INTERN HOURS
@@ -232,10 +232,7 @@ app.post('/api/hours/:name', (req, res) => {
 
     let interns = JSON.parse(data || '{}');
     const intern = interns[name];
-
-    if (!intern) {
-      return res.status(404).json({ error: `Intern '${name}' not found` });
-    }
+    if (!intern) return res.status(404).json({ error: `Intern '${name}' not found` });
 
     intern.logs = intern.logs || [];
     const existingLog = intern.logs.find(entry => entry.date === log.date);
@@ -247,12 +244,16 @@ app.post('/api/hours/:name', (req, res) => {
       intern.logs.push(log);
     }
 
+    intern.totalHours = calculateCappedTotalHours(intern.logs);
+
     fs.writeFile(INTERN_FILE, JSON.stringify(interns, null, 2), 'utf8', err => {
       if (err) return res.status(500).json({ error: 'Failed to write file' });
+
       res.status(200).json({ message: `Hours logged for '${name}'`, log });
     });
   });
 });
+
 
 
 // EXPORT startServer FUNCTION

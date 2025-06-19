@@ -124,7 +124,7 @@ function renderInterns(interns) {
     personDiv.innerHTML = `
       <div class="person-top">
         <p>${info.honorifics || "Mr."} ${info["full name"]} ${info.suffix || ""}</p>
-        <p>${info.hours || "0"} Hours</p>
+        <p>${info.totalHours || "0"} Hours</p>
       </div>
       <div class="person-bottom">
         <p>${info.address || "No address"}</p>
