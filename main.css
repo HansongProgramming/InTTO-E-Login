@@ -433,3 +433,26 @@ option {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
+
+/* ADMIN--------------------------------------------------------- */
+.admincontainer{
+  display: flex;
+  flex-direction: row;
+  gap: 1.2vh;
+}
+
+.admin-right{
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+  width: fit-content;
+}
+
+.data-container{
+  width: 50%;
+}
+
+.admin-data{
+  position: absolute;
+  top: 0%;
+}

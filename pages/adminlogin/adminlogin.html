@@ -5,12 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Page</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="/main.css">
   </head>
 
   <body>
     <div class="lights"></div>
-    <canvas id="myBarChart"></canvas>
-    <canvas id="myDoughnutChart"></canvas>
+    <div class="admincontainer">
+          <div class="admin-left">
+        <svg width="480" height="691" viewBox="0 0 480 691" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject x="-37.2" y="-37.2" width="554.4" height="765.4"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_9_clip_path);height:100%;width:100%"></div></foreignObject><rect data-figma-bg-blur-radius="37.2" x="0.75" y="0.75" width="478.5" height="689.5" rx="14.25" fill="url(#paint0_linear_427_9)" stroke="url(#paint1_linear_427_9)" stroke-width="1.5"/>
+        <defs>
+        <clipPath id="bgblur_0_427_9_clip_path" transform="translate(37.2 37.2)"><rect x="0.75" y="0.75" width="478.5" height="689.5" rx="14.25"/>
+        </clipPath><linearGradient id="paint0_linear_427_9" x1="469.95" y1="71.5" x2="-29.2096" y2="327.93" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#9F9F9F" stop-opacity="0.12"/>
+        <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5"/>
+        </linearGradient>
+        <linearGradient id="paint1_linear_427_9" x1="516.849" y1="135" x2="-101.257" y2="293.481" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white"/>
+        <stop offset="1" stop-color="#00683F"/>
+        </linearGradient>
+        </defs>
+        </svg>
+    </div>
+    <div class="admin-right">
+          <svg width="650" height="147" viewBox="0 0 650 147" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <foreignObject x="-37.2" y="-37.2" width="724.4" height="221.4">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_8_clip_path);height:100%;width:100%">
+            </div>
+          </foreignObject>
+          <rect data-figma-bg-blur-radius="37.2" x="0.75" y="-0.75" width="648.5" height="145.5" rx="14.25"
+            transform="matrix(1 0 0 -1 0 145.5)" fill="url(#paint0_linear_427_8)" stroke="url(#paint1_linear_427_8)"
+            stroke-width="1.5" />
+          <defs>
+            <clipPath id="bgblur_0_427_8_clip_path" transform="translate(37.2 37.2)">
+              <rect x="0.75" y="-0.75" width="648.5" height="145.5" rx="14.25" transform="matrix(1 0 0 -1 0 145.5)" />
+            </clipPath>
+            <linearGradient id="paint0_linear_427_8" x1="636.391" y1="15.2106" x2="563.331" y2="254.125"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#9F9F9F" stop-opacity="0.12" />
+              <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5" />
+            </linearGradient>
+            <linearGradient id="paint1_linear_427_8" x1="699.9" y1="28.7192" x2="456.422" y2="426.1"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="#00683F" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div class="data-container">
+            <svg width="649" height="532" viewBox="0 0 649 532" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <foreignObject x="-37.2" y="-36.7" width="723.4" height="605.9"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_178_clip_path);height:100%;width:100%"></div></foreignObject><path data-figma-bg-blur-radius="37.2" d="M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z" fill="url(#paint0_linear_427_178)" stroke="url(#paint1_linear_427_178)" stroke-width="1.5"/>
+            <defs>
+            <clipPath id="bgblur_0_427_178_clip_path" transform="translate(37.2 36.7)"><path d="M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z"/>
+            </clipPath><linearGradient id="paint0_linear_427_178" x1="635.412" y1="104.357" x2="211.546" y2="530.859" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#9F9F9F" stop-opacity="0.12"/>
+            <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5"/>
+            </linearGradient>
+            <linearGradient id="paint1_linear_427_178" x1="698.824" y1="148.191" x2="-12.4587" y2="505.398" gradientUnits="userSpaceOnUse">
+            <stop stop-color="white"/>
+            <stop offset="1" stop-color="#00683F"/>
+            </linearGradient>
+            </defs>
+            </svg>
+                <div class="admin-data">
+                <canvas id="myBarChart"></canvas>
+                <canvas id="myDoughnutChart"></canvas>
+              </div>
+        </div>
+
+        
+
+
+        
+        <svg width="649" height="532" viewBox="0 0 649 532" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject x="-37.2" y="-37.2" width="723.4" height="605.9"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_182_clip_path);height:100%;width:100%"></div></foreignObject><path data-figma-bg-blur-radius="37.2" d="M225.5 0.75H340.5C348.37 0.75 354.75 7.12994 354.75 15V39.5C354.75 48.1985 361.802 55.25 370.5 55.25H634C641.87 55.25 648.25 61.6299 648.25 69.5V516.5C648.25 524.37 641.87 530.75 634 530.75H15C7.12994 530.75 0.75 524.37 0.75 516.5V69.5C0.75 61.6299 7.12994 55.25 15 55.25H195.5C204.198 55.25 211.25 48.1985 211.25 39.5V15C211.25 7.12994 217.63 0.75 225.5 0.75Z" fill="url(#paint0_linear_427_182)" stroke="url(#paint1_linear_427_182)" stroke-width="1.5"/>
+        <defs>
+        <clipPath id="bgblur_0_427_182_clip_path" transform="translate(37.2 37.2)"><path d="M225.5 0.75H340.5C348.37 0.75 354.75 7.12994 354.75 15V39.5C354.75 48.1985 361.802 55.25 370.5 55.25H634C641.87 55.25 648.25 61.6299 648.25 69.5V516.5C648.25 524.37 641.87 530.75 634 530.75H15C7.12994 530.75 0.75 524.37 0.75 516.5V69.5C0.75 61.6299 7.12994 55.25 15 55.25H195.5C204.198 55.25 211.25 48.1985 211.25 39.5V15C211.25 7.12994 217.63 0.75 225.5 0.75Z"/>
+        </clipPath><linearGradient id="paint0_linear_427_182" x1="635.412" y1="103.857" x2="211.546" y2="530.359" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#9F9F9F" stop-opacity="0.12"/>
+        <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5"/>
+        </linearGradient>
+        <linearGradient id="paint1_linear_427_182" x1="698.824" y1="147.691" x2="-12.4587" y2="504.898" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white"/>
+        <stop offset="1" stop-color="#00683F"/>
+        </linearGradient>
+        </defs>
+        </svg>
+
+
+
+    </div>
+    </div>
     <script src="./index.js">
     </script>
   </body>
