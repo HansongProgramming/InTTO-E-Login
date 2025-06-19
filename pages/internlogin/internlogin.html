@@ -1,28 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Intern Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../../main.css" />
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-  </head>
 
-  <body>
-    <div class="lights"></div>
-    <div class="login-page">
-      <div class="registration-container">
-        <div class="header">
-          <img src="images/InTTO_Logo_White.svg" alt="" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intern Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+</head>
+
+<body>
+  <div class="lights"></div>
+  <div class="login-page">
+    <div class="registration-container">
+      <div class="header">
+        <svg width="650" height="147" viewBox="0 0 650 147" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <foreignObject x="-37.2" y="-37.2" width="724.4" height="221.4">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_8_clip_path);height:100%;width:100%">
+            </div>
+          </foreignObject>
+          <rect data-figma-bg-blur-radius="37.2" x="0.75" y="-0.75" width="648.5" height="145.5" rx="14.25"
+            transform="matrix(1 0 0 -1 0 145.5)" fill="url(#paint0_linear_427_8)" stroke="url(#paint1_linear_427_8)"
+            stroke-width="1.5" />
+          <defs>
+            <clipPath id="bgblur_0_427_8_clip_path" transform="translate(37.2 37.2)">
+              <rect x="0.75" y="-0.75" width="648.5" height="145.5" rx="14.25" transform="matrix(1 0 0 -1 0 145.5)" />
+            </clipPath>
+            <linearGradient id="paint0_linear_427_8" x1="636.391" y1="15.2106" x2="563.331" y2="254.125"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#9F9F9F" stop-opacity="0.12" />
+              <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5" />
+            </linearGradient>
+            <linearGradient id="paint1_linear_427_8" x1="699.9" y1="28.7192" x2="456.422" y2="426.1"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="#00683F" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div class="header-content">
+          <img src="/images/InTTO_Logo_White.svg" alt="" />
           <h1 id="curr-time"></h1>
         </div>
-        <div class="registration">
+      </div>
+      <div class="registration">
+        <svg width="650" height="534" viewBox="0 0 650 534" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <foreignObject x="-37.2" y="-37.2" width="724.4" height="608.4">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_7_clip_path);height:100%;width:100%">
+            </div>
+          </foreignObject>
+          <path data-figma-bg-blur-radius="37.2"
+            d="M15 0.75H635C642.87 0.75001 649.25 7.12995 649.25 15V467.5C649.25 475.37 642.87 481.75 635 481.75H484C475.302 481.75 468.25 488.802 468.25 497.5V519C468.25 526.87 461.87 533.25 454 533.25H15C7.12995 533.25 0.75 526.87 0.75 519V15C0.75 7.12994 7.12994 0.75 15 0.75Z"
+            fill="url(#paint0_linear_427_7)" stroke="url(#paint1_linear_427_7)" stroke-width="1.5" />
+          <defs>
+            <clipPath id="bgblur_0_427_7_clip_path" transform="translate(37.2 37.2)">
+              <path
+                d="M15 0.75H635C642.87 0.75001 649.25 7.12995 649.25 15V467.5C649.25 475.37 642.87 481.75 635 481.75H484C475.302 481.75 468.25 488.802 468.25 497.5V519C468.25 526.87 461.87 533.25 454 533.25H15C7.12995 533.25 0.75 526.87 0.75 519V15C0.75 7.12994 7.12994 0.75 15 0.75Z" />
+            </clipPath>
+            <linearGradient id="paint0_linear_427_7" x1="636.391" y1="55.2547" x2="164.476" y2="480.073"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#9F9F9F" stop-opacity="0.12" />
+              <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5" />
+            </linearGradient>
+            <linearGradient id="paint1_linear_427_7" x1="699.9" y1="104.327" x2="-42.3207" y2="437.797"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="#00683F" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="user-reg-container">
           <form class="user-registry" id="user-registry">
             <h1>Intern Registration:</h1>
             <div class="selection">
@@ -40,36 +93,45 @@
                 <option value="II">II</option>
               </select>
             </div>
-            <input
-              type="text"
-              name="full name"
-              id=""
-              placeholder="First Name   M.I.  Last Name"
-            />
-            <input
-              type="email"
-              name="email"
-              id=""
-              placeholder="emailaddress@students.uc-bcf.edu.ph"
-            />
-            <input
-              type="text"
-              name="address"
-              id=""
-              placeholder="School, Department, or Company Name"
-            />
+            <input type="text" name="full name" id="" placeholder="First Name   M.I.  Last Name" />
+            <input type="email" name="email" id="" placeholder="emailaddress@students.uc-bcf.edu.ph" />
+            <input type="text" name="address" id="" placeholder="School, Department, or Company Name" />
             <input type="submit" value="Submit Details" class="submit" />
           </form>
         </div>
+        <button class="back-button">
+          <svg width="173" height="41" viewBox="0 0 173 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <foreignObject x="-37.2" y="-37.2" width="247.4" height="115.4"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_35_clip_path);height:100%;width:100%"></div></foreignObject><rect data-figma-bg-blur-radius="37.2" x="0.75" y="0.75" width="171.5" height="39.5" rx="12.25" stroke="url(#paint0_linear_427_35)" stroke-width="1.5"/>
+          <defs>
+          <clipPath id="bgblur_0_427_35_clip_path" transform="translate(37.2 37.2)"><rect x="0.75" y="0.75" width="171.5" height="39.5" rx="12.25"/>
+          </clipPath><linearGradient id="paint0_linear_427_35" x1="186.281" y1="8.01013" x2="116.974" y2="115.952" gradientUnits="userSpaceOnUse">
+          <stop stop-color="white"/>
+          <stop offset="1" stop-color="#00683F"/>
+          </linearGradient>
+          </defs>
+          </svg>
+          <h2>Back</h2>
+        </button>
       </div>
-      <div class="intern-list">
+    </div>
+    <div class="intern-list">
+      <svg width="480" height="691" viewBox="0 0 480 691" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <foreignObject x="-37.2" y="-37.2" width="554.4" height="765.4"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(18.6px);clip-path:url(#bgblur_0_427_9_clip_path);height:100%;width:100%"></div></foreignObject><rect data-figma-bg-blur-radius="37.2" x="0.75" y="0.75" width="478.5" height="689.5" rx="14.25" fill="url(#paint0_linear_427_9)" stroke="url(#paint1_linear_427_9)" stroke-width="1.5"/>
+      <defs>
+      <clipPath id="bgblur_0_427_9_clip_path" transform="translate(37.2 37.2)"><rect x="0.75" y="0.75" width="478.5" height="689.5" rx="14.25"/>
+      </clipPath><linearGradient id="paint0_linear_427_9" x1="469.95" y1="71.5" x2="-29.2096" y2="327.93" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9F9F9F" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#2A2A2A" stop-opacity="0.5"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_427_9" x1="516.849" y1="135" x2="-101.257" y2="293.481" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white"/>
+      <stop offset="1" stop-color="#00683F"/>
+      </linearGradient>
+      </defs>
+      </svg>
+      <div class="user-list">
         <div class="search">
-          <input
-            type="search"
-            name=""
-            id="search-bar"
-            placeholder="Search Name"
-          />
+          <input type="search" name="" id="search-bar" placeholder="Search Name" />
         </div>
         <div class="list" id="list">
           <div class="person">
@@ -85,6 +147,8 @@
         </div>
       </div>
     </div>
-    <script src="./index.js"></script>
-  </body>
+  </div>
+  <script src="./index.js"></script>
+</body>
+
 </html>
