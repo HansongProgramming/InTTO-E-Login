@@ -68,7 +68,7 @@ function setupLoginButtons() {
     const btn = document.getElementById(id);
     if (btn) {
       btn.addEventListener('click', () => {
-        window.location.href = `${id}.html`;
+        window.location.href = `../${id}/${id}.html`;
       });
     }
   });

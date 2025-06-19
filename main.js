@@ -16,6 +16,7 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, "/pages/sessionpage/sessionPage.html"));
+  mainWindow.maximize();
 }
 
 app.whenReady().then(() => {

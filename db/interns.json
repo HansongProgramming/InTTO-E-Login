@@ -1,1 +1,17 @@
-{}
+{
+  "Joe Han": {
+    "suffix": "",
+    "full name": "Joe Han",
+    "email": "hanmoment@gmail.com",
+    "address": "CITCS",
+    "honorifics": "Mr.",
+    "status": "Time-Out",
+    "logs": [
+      {
+        "date": "2025-06-19",
+        "timeIn": "03:32 pm",
+        "timeOut": "03:32 pm"
+      }
+    ]
+  }
+}

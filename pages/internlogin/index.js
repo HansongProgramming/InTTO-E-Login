@@ -93,6 +93,24 @@ async function deleteIntern(fullName, reRender = true) {
   }
 }
 
+async function logInternHours(internName, timeIn, timeOut) {
+  const date = moment().format("YYYY-MM-DD");
+
+  const res = await fetch(`${API_BASE_URL}/hours/${encodeURIComponent(internName)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      log: { date, timeIn, timeOut }
+    }),
+  });
+
+  if (!res.ok) {
+    console.error("Failed to log hours");
+  } else {
+    console.log("Hours logged successfully");
+  }
+}
+
 function renderInterns(interns) {
   listContainer.innerHTML = "";
 
@@ -156,28 +174,39 @@ listContainer.addEventListener("click", async (event) => {
     const button = event.target;
     const intern = button.dataset.name;
     const currentStatus = button.dataset.status || "Time-Out";
-    const newStatus =
-      currentStatus === "Time-In" ? "Time-Out" : "Time-In";
 
-    const updates = { status: newStatus };
+    const isTimeIn = currentStatus === "Time-In";
+    const newStatus = isTimeIn ? "Time-Out" : "Time-In";
     const now = moment().format("hh:mm a");
 
-    if (newStatus === "Time-In") {
+    const updates = { status: newStatus };
+    if (!isTimeIn) {
       updates.timeIn = now;
-      console.log(`Time-in for: ${intern} at ${now}`);
     } else {
       updates.timeOut = now;
-      console.log(`Time-out for: ${intern} at ${now}`);
     }
+
 
     button.dataset.status = newStatus;
     button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
 
-    editIntern(intern, updates, false)
-      .then(() => console.log(`Updated user: ${intern}`))
-      .catch((err) => console.log(err));
+    try {
+      await editIntern(intern, updates, false);
+      console.log(`Updated user: ${intern}`);
+
+      const internData = await getInternList();
+      const fullIntern = internData[intern];
+      const timeIn = fullIntern?.timeIn;
+
+      if (isTimeIn && timeIn) {
+        await logInternHours(intern, timeIn, now);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
+
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -192,8 +221,10 @@ form.addEventListener("submit", async (event) => {
   const now = moment().format("hh:mm a");
 
   if (!data.timeIn && !data.timeOut) {
-    data.timeIn = now;
-    data.timeOut = "";
+    data.logs = {
+      timeIn: now,
+      timeOut: ""
+    };
   }
 
   const newName = data["full name"];
