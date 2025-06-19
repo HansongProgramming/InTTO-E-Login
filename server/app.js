@@ -2,16 +2,17 @@ const express = require('express');
 const moment = require('moment');
 const cors = require('cors');
 const fs = require('fs');
-const path = require('path');
+
+const calculateCappedTotalHours = require('./utils/calculate');
+const { PORT, TOTAL_INTERN_HOURS, INTERN_FILE} = require('./config');
 
 const app = express();
-const PORT = 3000;
-
-const internFilePath = path.join(__dirname, '../db/interns.json');
 
 app.use(express.json());
 app.use(cors());
 
+
+//ROUTES
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
 
 // GET ALL INTERNS
 app.get('/api/internList', (req, res) => {
-  fs.readFile(internFilePath, 'utf8', (err, data) => {
+  fs.readFile(INTERN_FILE, 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading file:', err);
       return res.status(500).json({
@@ -43,7 +44,7 @@ app.get('/api/internList', (req, res) => {
 app.post('/api/internList', (req, res) => {
   const newIntern = req.body;
 
-  fs.readFile(internFilePath, 'utf8', (err, fileData) => {
+  fs.readFile(INTERN_FILE, 'utf8', (err, fileData) => {
     if (err) {
       console.error('Error reading file:', err);
       return res.status(500).json({ error: 'Failed to read file' });
@@ -66,9 +67,22 @@ app.post('/api/internList', (req, res) => {
       return res.status(409).json({ error: `Intern '${fullName}' already exists. Use PATCH to edit.` });
     }
 
-    internList[fullName] = newIntern;
+    const today = moment().format("YYYY-MM-DD");
+    const timeNow = moment().format('hh:mm a');
+    
+    internList[fullName] = {
+      ...newIntern,
+      logs: [
+        {
+          date: today,
+          timeIn: timeNow,
+          timeOut: ""
+        }
+      ],
+      status: "Time-In"
+    };
 
-    fs.writeFile(internFilePath, JSON.stringify(internList, null, 2), 'utf8', (err) => {
+    fs.writeFile(INTERN_FILE, JSON.stringify(internList, null, 2), 'utf8', (err) => {
       if (err) {
         console.error('Error writing file:', err);
         return res.status(500).json({ error: 'Failed to write file' });
@@ -83,11 +97,12 @@ app.post('/api/internList', (req, res) => {
   });
 });
 
+
 // DELETE INTERN
 app.delete('/deleteIntern/:name', (req, res) => {
   const internName = req.params.name;
 
-  fs.readFile(internFilePath, 'utf8', (err, fileData) => {
+  fs.readFile(INTERN_FILE, 'utf8', (err, fileData) => {
     if (err) {
       console.error('Error reading file:', err);
       return res.status(500).json({ error: 'Failed to read file' });
@@ -107,7 +122,7 @@ app.delete('/deleteIntern/:name', (req, res) => {
 
     delete internList[internName];
 
-    fs.writeFile(internFilePath, JSON.stringify(internList, null, 2), 'utf8', (err) => {
+    fs.writeFile(INTERN_FILE, JSON.stringify(internList, null, 2), 'utf8', (err) => {
       if (err) {
         console.error('Error writing file:', err);
         return res.status(500).json({ error: 'Failed to write file' });
@@ -119,15 +134,16 @@ app.delete('/deleteIntern/:name', (req, res) => {
 
 });
 
+
 // UPDATE INTERN INFORMATION
 app.patch('/editIntern/:name', (req, res) => {
   const oldName = decodeURIComponent(req.params.name).trim();
   const updates = req.body;
 
-  fs.readFile(internFilePath, 'utf8', (err, fileData) => {
+  fs.readFile(INTERN_FILE, 'utf8', (err, fileData) => {
     if (err) return res.status(500).json({ error: 'Failed to read file' });
-    let internList = {};
 
+    let internList = {};
     try {
       internList = JSON.parse(fileData);
     } catch {
@@ -140,18 +156,104 @@ app.patch('/editIntern/:name', (req, res) => {
 
     const newName = updates['full name']?.trim() || oldName;
 
-    if (newName !== oldName && internList[newName]) 
+    if (newName !== oldName && internList[newName])
       return res.status(409).json({ error: `Intern '${newName}' already exists` });
 
-    if (newName !== oldName) delete internList[oldName];
-    internList[newName] = { ...existing, ...updates, 'full name': newName };
+    if (!Array.isArray(existing.logs)) existing.logs = [];
 
-    fs.writeFile(internFilePath, JSON.stringify(internList, null, 2), 'utf8', err => {
+    const today = moment().format("YYYY-MM-DD");
+    let currentLog = existing.logs.find(log => log.date === today);
+
+    if (!currentLog) {
+      currentLog = { date: today };
+      existing.logs.push(currentLog);
+    }
+
+    if (updates.status === "Time-In" && updates.timeIn) {
+      currentLog.timeIn = updates.timeIn;
+    }
+
+    if (updates.status === "Time-Out" && updates.timeOut) {
+      currentLog.timeOut = updates.timeOut;
+    }
+
+    delete updates.logs;
+
+    const { timeIn, timeOut, logs, ...rest } = updates;
+    const merged = { ...existing, ...rest, 'full name': newName };
+
+    if (newName !== oldName) delete internList[oldName];
+    internList[newName] = merged;
+
+    fs.writeFile(INTERN_FILE, JSON.stringify(internList, null, 2), 'utf8', err => {
       if (err) return res.status(500).json({ error: 'Failed to write file' });
       res.json({ message: `Updated '${oldName}'`, data: internList[newName] });
     });
   });
 });
+
+
+// GET INTERN HOURS
+app.get('/api/hours/:name', (req, res) => {
+  const name = decodeURIComponent(req.params.name).trim();
+
+  fs.readFile(INTERN_FILE, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'Failed to read file' });
+
+    let interns = JSON.parse(data || '{}');
+    const intern = interns[name];
+
+    if (!intern) return res.status(404).json({ error: `Intern '${name}' not found` });
+
+    const logs = intern.logs || [];
+    const totalHours = calculateCappedTotalHours(logs);
+
+    res.status(200).json({
+      name,
+      totalHours: parseFloat(totalHours.toFixed(2)),
+      logs,
+      remainingHours: Math.max(0, TOTAL_INTERN_HOURS - totalHours)
+    });
+  });
+});
+
+
+// LOG INTERN HOURS
+app.post('/api/hours/:name', (req, res) => {
+  const name = decodeURIComponent(req.params.name).trim();
+  const { log } = req.body;
+
+  if (!log || !log.date || !log.timeIn || !log.timeOut) {
+    return res.status(400).json({ error: "Missing date/timeIn/timeOut in log" });
+  }
+
+  fs.readFile(INTERN_FILE, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'Failed to read file' });
+
+    let interns = JSON.parse(data || '{}');
+    const intern = interns[name];
+
+    if (!intern) {
+      return res.status(404).json({ error: `Intern '${name}' not found` });
+    }
+
+    intern.logs = intern.logs || [];
+    const existingLog = intern.logs.find(entry => entry.date === log.date);
+
+    if (existingLog) {
+      existingLog.timeIn = log.timeIn;
+      existingLog.timeOut = log.timeOut;
+    } else {
+      intern.logs.push(log);
+    }
+
+    fs.writeFile(INTERN_FILE, JSON.stringify(interns, null, 2), 'utf8', err => {
+      if (err) return res.status(500).json({ error: 'Failed to write file' });
+      res.status(200).json({ message: `Hours logged for '${name}'`, log });
+    });
+  });
+});
+
 
 // EXPORT startServer FUNCTION
 module.exports = function startServer() {
@@ -159,4 +261,3 @@ module.exports = function startServer() {
     console.log(`Listening to requests on http://${"192.168.0.87" || "localhost"}:${PORT}`);
   });
 };
-
