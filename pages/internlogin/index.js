@@ -5,6 +5,7 @@ const form = document.getElementById("user-registry");
 const searchBar = document.getElementById("search-bar");
 const listContainer = document.getElementById("list");
 const toggleButton = document.getElementById("toggle-status");
+const backButton = document.getElementById('back-button');
 
 let selectedIntern = null;
 
@@ -246,6 +247,10 @@ form.addEventListener("submit", async (event) => {
 
   form.reset();
   toggleCrudButtons(false);
+});
+
+backButton.addEventListener('click', () => {
+  window.location.href = '../sessionpage/sessionPage.html';
 });
 
 searchBar.addEventListener("input", async () => {
