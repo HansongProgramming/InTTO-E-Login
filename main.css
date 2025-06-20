@@ -438,21 +438,90 @@ option {
 .admincontainer{
   display: flex;
   flex-direction: row;
-  gap: 1.2vh;
+  gap: 1rem;
 }
+
+.admin-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.header-content{
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: space-between;
+}
+
+.header img {
+  width: 35%;
+  padding-left: 2rem;
+}
+
+.header h1 {
+  color: white;
+  font-weight: 200;
+  font-size: clamp(2.5vw, 2.5vw, 2.5vw);
+}
+
 
 .admin-right{
   display: flex;
   flex-direction: column;
-  gap: 1.2vh;
+  gap: 1rem;
   width: fit-content;
 }
 
-.data-container{
-  width: 50%;
+.admin-tabs{
+  position: absolute;
+  top: 2%;
+  left: 2%;
 }
 
-.admin-data{
+.tab1, .tab2{
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: rgb(124, 124, 124);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 5;
+  font-size: 1.5rem;
+  margin-right: 1.6rem;
+  margin-left:0.15rem ; 
+}
+
+.admin-data-tab1,
+.admin-data-tab2 {
+  display: none;
+  width: 100%;
+  height: 100%;
   position: absolute;
-  top: 0%;
+  top: 10%;
+  left: 0;
+}
+
+.admin-data-tab1.active,
+.admin-data-tab2.active {
+  display: block;
+}
+
+
+.tab1:hover, .tab2:hover{
+  transform: scale(1.05);
+}
+
+.data-container{
+  position: relative;
+}
+
+.admin-tabs button.active {
+  color: white;
+}
+
+
+.admin-data-tab1{
+  position: absolute;
+  top: 10%;
 }
