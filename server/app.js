@@ -177,7 +177,12 @@ app.patch('/editIntern/:name', (req, res) => {
     }
 
     const { logs, timeIn, timeOut, ...rest } = updates;
-    const merged = { ...existing, ...rest, 'full name': newName };
+    const merged = {
+      ...existing,
+      ...rest,
+      'full name': newName,
+      logs: existing.logs
+    };
 
     merged.totalHours = calculateCappedTotalHours(merged.logs);
 
@@ -190,7 +195,6 @@ app.patch('/editIntern/:name', (req, res) => {
     });
   });
 });
-
 
 
 // GET INTERN HOURS
@@ -216,44 +220,6 @@ app.get('/api/hours/:name', (req, res) => {
     });
   });
 });
-
-
-// LOG INTERN HOURS
-app.post('/api/hours/:name', (req, res) => {
-  const name = decodeURIComponent(req.params.name).trim();
-  const { log } = req.body;
-
-  if (!log || !log.date || !log.timeIn || !log.timeOut) {
-    return res.status(400).json({ error: "Missing date/timeIn/timeOut in log" });
-  }
-
-  fs.readFile(INTERN_FILE, 'utf8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Failed to read file' });
-
-    let interns = JSON.parse(data || '{}');
-    const intern = interns[name];
-    if (!intern) return res.status(404).json({ error: `Intern '${name}' not found` });
-
-    intern.logs = intern.logs || [];
-    const existingLog = intern.logs.find(entry => entry.date === log.date);
-
-    if (existingLog) {
-      existingLog.timeIn = log.timeIn;
-      existingLog.timeOut = log.timeOut;
-    } else {
-      intern.logs.push(log);
-    }
-
-    intern.totalHours = calculateCappedTotalHours(intern.logs);
-
-    fs.writeFile(INTERN_FILE, JSON.stringify(interns, null, 2), 'utf8', err => {
-      if (err) return res.status(500).json({ error: 'Failed to write file' });
-
-      res.status(200).json({ message: `Hours logged for '${name}'`, log });
-    });
-  });
-});
-
 
 
 // EXPORT startServer FUNCTION

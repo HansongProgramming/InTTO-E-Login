@@ -94,24 +94,6 @@ async function deleteIntern(fullName, reRender = true) {
   }
 }
 
-async function logInternHours(internName, timeIn, timeOut) {
-  const date = moment().format("YYYY-MM-DD");
-
-  const res = await fetch(`${API_BASE_URL}/hours/${encodeURIComponent(internName)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      log: { date, timeIn, timeOut }
-    }),
-  });
-
-  if (!res.ok) {
-    console.error("Failed to log hours");
-  } else {
-    console.log("Hours logged successfully");
-  }
-}
-
 function renderInterns(interns) {
   listContainer.innerHTML = "";
 
@@ -182,11 +164,10 @@ listContainer.addEventListener("click", async (event) => {
 
     const updates = { status: newStatus };
     if (!isTimeIn) {
-      updates.timeIn = now;
+      updates.timeIn = "09:00 am";
     } else {
-      updates.timeOut = now;
+      updates.timeOut = "05:00 pm";
     }
-
 
     button.dataset.status = newStatus;
     button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
@@ -195,13 +176,8 @@ listContainer.addEventListener("click", async (event) => {
       await editIntern(intern, updates, false);
       console.log(`Updated user: ${intern}`);
 
-      const internData = await getInternList();
-      const fullIntern = internData[intern];
-      const timeIn = fullIntern?.timeIn;
-
-      if (isTimeIn && timeIn) {
-        await logInternHours(intern, timeIn, now);
-      }
+      const interns = await getInternList();
+      if (interns) renderInterns(interns);
     } catch (err) {
       console.error(err);
     }
