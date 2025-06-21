@@ -101,7 +101,7 @@ function renderInterns(interns) {
     const personDiv = document.createElement("div");
     personDiv.className = "person";
 
-    const userStatus = info.status === "Time-In" ? "Time-out" : "Time-in";
+    const userStatus = info.status === "Time-In" ? "Time-out" : "Time-In";
 
     personDiv.innerHTML = `
       <div class="person-top">
@@ -164,9 +164,9 @@ listContainer.addEventListener("click", async (event) => {
 
     const updates = { status: newStatus };
     if (!isTimeIn) {
-      updates.timeIn = "09:00 am";
+      updates.timeIn = now;
     } else {
-      updates.timeOut = "05:00 pm";
+      updates.timeOut = now;
     }
 
     button.dataset.status = newStatus;
