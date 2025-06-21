@@ -1,11 +1,19 @@
 let myBarChart = document.getElementById("myBarChart").getContext("2d");
-let myDoughnutChart = document
-  .getElementById("myDoughnutChart")
+let vistorCategory = document
+  .getElementById("visitorCategory")
+  .getContext("2d");
+
+let returningVsNew = document
+  .getElementById("returningVsNew")
+  .getContext("2d");
+
+let officeActivity = document
+  .getElementById("officeActivity")
   .getContext("2d");
 
 Chart.defaults.backgroundColor = "#64E4B1";
 
-let barChart = new Chart(myBarChart, {
+let visitorTimeLine = new Chart(myBarChart, {
   type: "bar",
   data: {
     labels: [
@@ -26,7 +34,7 @@ let barChart = new Chart(myBarChart, {
     },
 });
 
-let doughnutChart = new Chart(myDoughnutChart, {
+let Visitor_category = new Chart(visitorCategory, {
   type: "doughnut",
   data: {
     labels: ["Guests", "Staff"],
@@ -34,20 +42,68 @@ let doughnutChart = new Chart(myDoughnutChart, {
       label: "Visitor Category",
       data: [100, 50],
       backgroundColor: ["#64E4B1", "#008650"],
-      borderWidth: 1,
+      borderWidth: 0,
     }],
   },
   options: {
+    cutout: 70,
     plugins: {
-      legend: { position: "top" },
+      legend: { position: "bottom" },
       title: { display: true, text: "Visitor Statistics" },
     },
   },
 });
 
+let Returning_vs_New = new Chart(returningVsNew, {
+  type: "doughnut",
+  data: {
+    labels: ["Guests", "Staff"],
+    datasets: [{
+      label: "Returning Vs New",
+      data: [100, 50],
+      backgroundColor: ["#64E4B1", "#008650"],
+      borderWidth: 0,
+    }],
+  },
+  options: {
+    cutout: 70,
+    plugins: {
+      legend: { position: "bottom" },
+      title: { display: true, text: "Returning Vs New" },
+    },
+  },
+});
+
+let Office_Activity = new Chart(officeActivity, {
+  type: "doughnut",
+  data: {
+    labels: ["Guests", "Staff"],
+    datasets: [{
+      label: "Office Activity",
+      data: [100, 50],
+      backgroundColor: ["#64E4B1", "#008650"],
+      borderWidth: 0,
+    }],
+  },
+  options: {
+    cutout: 70,
+    plugins: {
+      legend: { position: "bottom" },
+      title: { display: true, text: "Office Activity" },
+    },
+  },
+});
+
+
+window.onload = async () => {
+  renderTime();
+
+  setInterval(renderTime, 15000);
+};
+
 async function exportCSV(data) {}
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
       const tab1Btn = document.querySelector(".tab1");
       const tab2Btn = document.querySelector(".tab2");
       const morphPath = document.getElementById("morphPath");
@@ -109,3 +165,12 @@ async function exportCSV(data) {}
 
       toggleActiveTab(tab1Btn);
     });
+
+    function renderTime() {
+  const timeEl = document.getElementById("curr-time");
+
+  if (timeEl) {
+    const now = moment();
+    timeEl.textContent = now.format("hh:mm A");
+  }
+}
