@@ -525,17 +525,82 @@ option {
   display: flex;
 }
 
+.admin-left{
+  position: relative;
+}
 
+.logs{
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
 
-.admin-tab1-content1, .admin-tab1-content2, .admin-tab1-content3, .admin-tab1-content4{
+.admin-back-button{
+  background-color: rgba(0, 0, 0, 0);
+  outline: none;
+  border: none;
+  position: absolute;
+  top: 93%;
+  left: 64%;
+  width: fit-content;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: white;
+}
+
+.admin-back-button:hover{
+  transform: scale(1.05);
+}
+
+.count{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.count h1{
+  font-size: 6rem;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.count p{
+  padding: 0;
+  margin: 0;
+}
+
+.count-legend{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 0.2;
+}
+
+.admin-tab1-content1, .admin-tab1-content2, .admin-tab1-content3{
   width: 35%;
   height: 50%;
-  margin: auto 5% auto 8%
+  margin: auto 0% auto 5%
+}
+
+
+
+.admin-tab1-content4{
+  width: 35%;
+  height: 50%;
+  margin: auto 0% auto 10%;
 }
 
 .admin-tab1-content2{
   color: white;
   font-family: var(--font-poppins) ;
+  display: flex;
+  flex-direction: row;
+  width: 50%;
 }
 
 .tab1:hover, .tab2:hover{
