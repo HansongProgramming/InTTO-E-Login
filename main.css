@@ -29,7 +29,21 @@ body {
   filter: blur(30rem);
   border-radius: 100%;
   z-index: -1;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transform-origin: 100% 90%;
+  animation: rotateAround 10s linear infinite;
 }
+
+
+    @keyframes rotateAround {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
 
 
 .main {
@@ -348,6 +362,7 @@ option {
 .user-list{
   position: absolute;
   width: 100%;
+  height: 100%;
 }
 
 .search {
@@ -532,7 +547,10 @@ option {
 .logs{
   position: absolute;
   width: 100%;
+  height: 90%;
   top: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-back-button{
