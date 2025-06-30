@@ -4,10 +4,14 @@ const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 const form = document.getElementById("user-registry");
 const searchBar = document.getElementById("search-bar");
 const listContainer = document.getElementById("list");
-const toggleButton = document.getElementById("toggle-status");
 const backButton = document.getElementById('back-button');
 
+const { ipcRenderer } = require("electron");
+
+
 let selectedIntern = null;
+let pendingFormData = null;
+let isWaitingForBarcode = false;
 
 window.onload = async () => {
   const interns = await getInternList();
@@ -48,11 +52,10 @@ async function updateInternList(data, reRender = true) {
   }
 }
 
-async function editIntern(fullName, updates, reRender = true) {
+async function editIntern(id, updates, reRender = true) {
   try {
-    const encodedName = encodeURIComponent(fullName);
     const response = await fetch(
-      `http://192.168.0.87:3000/editIntern/${encodedName}`,
+      `http://192.168.0.87:3000/editIntern/${encodeURIComponent(id)}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -62,7 +65,7 @@ async function editIntern(fullName, updates, reRender = true) {
 
     if (!response.ok) throw new Error("Failed to edit intern");
 
-    console.log(`Intern '${fullName}' updated successfully`);
+    console.log(`Intern '${id}' updated successfully`);
 
     if (reRender) {
       const interns = await getInternList();
@@ -72,6 +75,8 @@ async function editIntern(fullName, updates, reRender = true) {
     console.error("Error editing intern:", err);
   }
 }
+
+
 
 async function deleteIntern(fullName, reRender = true) {
   try {
@@ -112,7 +117,7 @@ function renderInterns(interns) {
         <p>${info.address || "No address"}</p>
         <button 
           class="Time" 
-          data-name="${name}" 
+          data-id="${name}" 
           data-status="${info.status || "Time-Out"}">
           ${userStatus}
         </button>
@@ -155,7 +160,7 @@ function renderTime() {
 listContainer.addEventListener("click", async (event) => {
   if (event.target.classList.contains("Time")) {
     const button = event.target;
-    const intern = button.dataset.name;
+    const internId = button.dataset.id;
     const currentStatus = button.dataset.status || "Time-Out";
 
     const isTimeIn = currentStatus === "Time-In";
@@ -173,8 +178,8 @@ listContainer.addEventListener("click", async (event) => {
     button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
 
     try {
-      await editIntern(intern, updates, false);
-      console.log(`Updated user: ${intern}`);
+      await editIntern(internId, updates, false);
+      console.log(`Updated user: ${internId}`);
 
       const interns = await getInternList();
       if (interns) renderInterns(interns);
@@ -185,44 +190,14 @@ listContainer.addEventListener("click", async (event) => {
 });
 
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
   const formData = new FormData(form);
   const data = Object.fromEntries(formData.entries());
+  pendingFormData = data;
 
-  data.honorifics = data.honorifics || "Mr.";
-  data.suffix = data.suffix || "";
-  data.status = "Time-In";
-
-  const now = moment().format("hh:mm a");
-
-  if (!data.timeIn && !data.timeOut) {
-    data.logs = {
-      timeIn: now,
-      timeOut: ""
-    };
-  }
-
-  const newName = data["full name"];
-
-  if (selectedIntern) {
-    if (selectedIntern !== newName) {
-      await deleteIntern(selectedIntern, false);
-      await updateInternList(data, false);
-
-      const interns = await getInternList();
-      renderInterns(interns);
-    } else {
-      await editIntern(selectedIntern, data);
-    }
-      selectedIntern = null;
-  } else {
-    await updateInternList(data);
-  }
-
-  form.reset();
-  toggleCrudButtons(false);
+  ipcRenderer.send("open-confirm-window");
 });
 
 backButton.addEventListener('click', () => {
@@ -298,4 +273,52 @@ document.addEventListener("click", (event) => {
     form.reset();
     toggleCrudButtons(false);
   }
+});
+
+ipcRenderer.once('barcode-scanned', async (_event, scannedName) => {
+  // console.log('barcode-scanned triggered', { pendingFormData, isWaitingForBarcode });
+  if (!pendingFormData || isWaitingForBarcode) return;
+
+  console.log('Passed check for', scannedName);
+  isWaitingForBarcode = false;
+
+  const data = pendingFormData;
+  pendingFormData = null;
+
+  data.barcode = scannedName;
+  data.honorifics = data.honorifics || "Mr.";
+  data.suffix = data.suffix || "";
+  data.status = "Time-In";
+
+  const now = moment().format("hh:mm a");
+
+  if (!data.timeIn && !data.timeOut) {
+    data.logs = {
+      timeIn: now,
+      timeOut: ""
+    };
+  }
+
+  const newName = data["full name"];
+
+  if (selectedIntern) {
+    console.log('test1')
+    if (selectedIntern !== newName) {
+      await deleteIntern(selectedIntern, false);
+      await updateInternList(data, false);
+
+      const interns = await getInternList();
+      renderInterns(interns);
+    } else {
+      await editIntern(selectedIntern, data);
+    }
+      selectedIntern = null;
+  } else {
+    console.log('test2')
+    console.log(data);
+    await updateInternList(data);
+  }
+
+  form.reset();
+  toggleCrudButtons(false);
 });
