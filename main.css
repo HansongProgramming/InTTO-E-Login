@@ -31,7 +31,7 @@ body {
   z-index: -1;
   transform: translate(-50%, -50%) rotate(0deg);
   transform-origin: 100% 90%;
-  animation: rotateAround 10s linear infinite;
+  animation: rotateAround 7s linear infinite;
 }
 
 
@@ -88,6 +88,14 @@ body {
 .background{
   z-index: -1;
   width: 100%;
+}
+
+#curr-time{
+    font-weight: 100;
+    padding: 0;
+    padding-right: 2rem;
+    line-height: 0;
+    font-size:clamp(1rem, 10vw, 5rem);
 }
 
 .E-login {
@@ -260,7 +268,7 @@ body {
   position: absolute;
   display: flex;
   flex-direction: row;
-  align-items: space-between;
+  justify-content: space-between;
 }
 
 .header img {
@@ -476,15 +484,19 @@ option {
   color: white;
   padding: 0.5rem;
   font-size: 150%;
+  margin-top: 0.5rem;
 }
 
 .admin-header-content img{
   width: 30%;
+  margin-left: 1rem;
 }
 
 .admin-header-content h1{
     font-weight: 100;
-      font-size:2vw;
+    padding: 0;
+    line-height: 0;
+    font-size:clamp(1rem, 10vw, 5rem);
 }
 
 
