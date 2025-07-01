@@ -76,8 +76,6 @@ async function editIntern(id, updates, reRender = true) {
   }
 }
 
-
-
 async function deleteIntern(fullName, reRender = true) {
   try {
     const encodedName = encodeURIComponent(fullName);
@@ -157,38 +155,13 @@ function renderTime() {
   }
 }
 
-listContainer.addEventListener("click", async (event) => {
+listContainer.addEventListener("click", (event) => {
   if (event.target.classList.contains("Time")) {
     const button = event.target;
     const internId = button.dataset.id;
-    const currentStatus = button.dataset.status || "Time-Out";
-
-    const isTimeIn = currentStatus === "Time-In";
-    const newStatus = isTimeIn ? "Time-Out" : "Time-In";
-    const now = moment().format("hh:mm a");
-
-    const updates = { status: newStatus };
-    if (!isTimeIn) {
-      updates.timeIn = now;
-    } else {
-      updates.timeOut = now;
-    }
-
-    button.dataset.status = newStatus;
-    button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
-
-    try {
-      await editIntern(internId, updates, false);
-      console.log(`Updated user: ${internId}`);
-
-      const interns = await getInternList();
-      if (interns) renderInterns(interns);
-    } catch (err) {
-      console.error(err);
-    }
+    ipcRenderer.send("open-time-window", internId);
   }
 });
-
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -321,4 +294,36 @@ ipcRenderer.once('barcode-scanned', async (_event, scannedName) => {
 
   form.reset();
   toggleCrudButtons(false);
+});
+
+ipcRenderer.on('toggle-time', async (_event, scannedCode) => {
+  try {
+    const interns = await getInternList();
+    const intern = interns[scannedCode]
+
+    if (!intern) {
+      console.warn(`Intern not found: ${scannedCode}`);
+      return;
+    }
+
+    const isTimeIn = intern.status === "Time-In";
+    const newStatus = isTimeIn ? "Time-Out" : "Time-In";
+    const now = moment().format("hh:mm a");
+
+    const updates = { status: newStatus };
+    if (!isTimeIn) {
+      updates.timeIn = now;
+    } else {
+      updates.timeOut = now;
+    }
+
+    await editIntern(scannedCode, updates, false);
+    console.log(`Updated ${scannedCode} to ${scannedCode}`);
+
+    const updatedInterns = await getInternList();
+    if (updatedInterns) renderInterns(updatedInterns);
+
+  } catch (err) {
+    console.error("Failed to toggle time:", err);
+  }
 });

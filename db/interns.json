@@ -1,1 +1,18 @@
-{}
+{
+  "22-5312-997": {
+    "suffix": "",
+    "full name": "Joe Moment",
+    "email": "moment@gmail.com",
+    "address": "CITSC",
+    "honorifics": "Mr.",
+    "status": "Time-Out",
+    "logs": [
+      {
+        "date": "2025-07-01",
+        "timeIn": "09:58 am",
+        "timeOut": "09:58 am"
+      }
+    ],
+    "totalHours": 0
+  }
+}

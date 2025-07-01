@@ -6,12 +6,27 @@
     <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <title>Confirm ID</title>
     <style>
-      #camera {
-        width: 100%;
+      *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      #camera video {
+      html {
+        width: 600px;
+        height: 400px;
+      }
+      body {
         width: 100%;
-        max-width: 1080px;
+        height: 100%;
+        position: relative;
+      }
+      #camera, #camera video, #result {
+        position: absolute;
+        top: 0;
+        left: 30;
+
+        width: 100%;
+        height: 100%;
       }
     </style>
   </head>
@@ -26,17 +41,15 @@
       const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 
       let scanning = true;
-      let scannerMode = "register";
 
       const quaggaConfig = {
         inputStream: {
           target: document.querySelector("#camera"),
           type: "LiveStream",
           constraints: {
-            width: { min: 1080 },
-            height: { min: 480 },
+            width: { min: 500 },
+            height: { min: 350 },
             facingMode: "environment",
-            aspectRatio: { min: 1, max: 2 },
           },
         },
         decoder: {
@@ -79,10 +92,7 @@
           document
             .getElementById("confirm-button")
             .addEventListener("click", () => {
-              const channel =
-                scannerMode === "register"
-                  ? "barcode-register"
-                  : "barcode-scanned";
+              const channel = "barcode-scanned";
               ipcRenderer.send(channel, code);
             });
           document

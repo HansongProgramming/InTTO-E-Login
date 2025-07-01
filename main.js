@@ -21,46 +21,71 @@ function createWindow() {
   mainWindow.maximize();
 }
 
-function createConfirmWindow(mode = 'register') {
+function createConfirmWindow() {
   const confirmWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 675,
+    height: 550,
     modal: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-    }
+    },
+    autoHideMenuBar: true,
   });
 
-    confirmWindow.loadURL('http://localhost:3000/confirm');
+  confirmWindow.loadURL('http://localhost:3000/confirm');
 
-    confirmWindow.webContents.once('did-finish-load', () => {
-      confirmWindow.webContents.send('scanner-mode', mode);
-    });
+  const channel = 'barcode-scanned';
 
-    const channel = (mode === 'register') ? 'barcode-register' : 'barcode-scanned';
+  ipcMain.once(channel, (_event, code) => {
+    const mainWindow = BrowserWindow.getAllWindows()
+      .find((window) => {
+        return !window.isDestroyed() && window !== confirmWindow;
+      });
 
-    ipcMain.once(channel, (_event, code) => {
-      const mainWindow = BrowserWindow.getAllWindows()
-        .find((window) => {
-          return !window.isDestroyed() && window !== confirmWindow
-        });
+    if (mainWindow) {
+      mainWindow.webContents.send('barcode-scanned', code);
+    }
 
-      
-      if (mainWindow) {
-        mainWindow.webContents.send('barcode-scanned', code);
-      }
+    if (!confirmWindow.isDestroyed()) confirmWindow.close();
+  });
+}
 
-      if (!confirmWindow.isDestroyed()) confirmWindow.close();
-    })
+function createToggleTimeWindow(internId) {
+  const confirmWindow = new BrowserWindow({
+    width: 675,
+    height: 550,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    autoHideMenuBar: true,
+  });
+
+  confirmWindow.loadURL('http://localhost:3000/confirm');
+
+  confirmWindow.webContents.once('did-finish-load', () => {
+    confirmWindow.webContents.send('confirm-for', internId);
+  });
+
+  ipcMain.once('barcode-scanned', (_event, code) => {
+    const mainWindow = BrowserWindow.getAllWindows()
+      .find((window) => !window.isDestroyed() && window !== confirmWindow);
+
+    if (mainWindow) {
+      mainWindow.webContents.send('toggle-time', code);
+    }
+
+    if (!confirmWindow.isDestroyed()) confirmWindow.close();
+  });
 }
 
 
+
 app.whenReady().then(() => {
-  app.whenReady().then(() => {
-    startServer(() => {
-      createWindow();
-    });
+  startServer(() => {
+    createWindow();
   });
 
   app.on("activate", () => {
@@ -69,6 +94,7 @@ app.whenReady().then(() => {
     }
   });
 });
+
 
 app.on("window-all-closed", () => {
   if (!isMac) {
@@ -79,3 +105,7 @@ app.on("window-all-closed", () => {
 ipcMain.on('open-confirm-window', () => {
   createConfirmWindow();
 })
+
+ipcMain.on("open-time-window", (_event, internId) => {
+  createToggleTimeWindow(internId);
+});
