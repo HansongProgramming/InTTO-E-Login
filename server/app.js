@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const calculateCappedTotalHours = require('./utils/calculate');
-const { PORT, TOTAL_INTERN_HOURS, INTERN_FILE} = require('./config');
+const { PORT, TOTAL_INTERN_HOURS, INTERN_FILE, GUEST_FILE } = require('./config');
 
 const app = express();
 
@@ -202,7 +202,6 @@ app.patch('/editIntern/:id', (req, res) => {
 });
 
 
-
 // GET INTERN HOURS
 app.get('/api/hours/:name', (req, res) => {
   const name = decodeURIComponent(req.params.name).trim();
@@ -224,6 +223,27 @@ app.get('/api/hours/:name', (req, res) => {
       logs,
       remainingHours: Math.max(0, TOTAL_INTERN_HOURS - totalHours)
     });
+  });
+});
+
+
+app.get('/api/guestList', (req, res) => {
+  fs.readFile(GUEST_FILE, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading file:', err);
+      return res.status(500).json({
+        error: "Failed to read the file",
+      });
+    }
+    
+    try {
+      const guestList = JSON.parse(data);
+      res.json(guestList)
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      res.status(500).send('Internal Server Error');
+    }
+
   });
 });
 
