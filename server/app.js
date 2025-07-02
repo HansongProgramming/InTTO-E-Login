@@ -247,11 +247,57 @@ app.get('/api/guestList', (req, res) => {
   });
 });
 
+app.post('/api/guestList', (req, res) => {
+  const newGuest = req.body;
+  const fullName = newGuest['full name'];
+
+  if (!fullName) {
+    return res.status(400).json({ error: "Missing full name in data." });
+  }
+
+  fs.readFile(GUEST_FILE, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to read file." });
+    }
+
+    let guestList = {};
+    try {
+      guestList = JSON.parse(data);
+    } catch (err) {
+      return res.status(500).json({ error: 'Invalid JSON format' });
+    }
+
+    const today = moment().format("YYYY-MM-DD");
+    const timeNow = moment().format('hh:mm a');
+
+    const logs = [{
+      date: today,
+      timeIn: timeNow,
+      timeOut: ""
+    }];
+
+    guestList[fullName] = {
+      ...newGuest,
+      logs
+    };
+
+    fs.writeFile(GUEST_FILE, JSON.stringify(guestList, null, 2), 'utf8', err => {
+      if (err) return res.status(500).json({ error: 'Failed to write file' });
+
+      res.status(200).json({
+        message: `Guest ${fullName} added.`,
+        data: guestList[fullName]
+      });
+    });
+
+  });
+});
+
 
 // EXPORT startServer FUNCTION
 module.exports = function startServer(callback) {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Listening on http://localhost:${PORT}`);
-    if (callback) callback();
+    callback?.();
   });
 };

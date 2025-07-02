@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://192.168.0.87:3000/api";
-const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
+const API_BASE_URL = "http://192.168.0.88:3000/api";
+const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
 
 const form = document.getElementById("user-registry");
 const searchBar = document.getElementById("search-bar");
@@ -10,16 +10,17 @@ const backButton = document.getElementById('back-button');
 let selectedIntern = null;
 
 window.onload = async () => {
-  const interns = await getInternList();
-  if (interns) renderInterns(interns);
+  const guests = await getGuestList();
+  console.log(guests);
+  if (guests) renderGuests(guests);
   renderTime();
 
   setInterval(renderTime, 15000);
 };
 
-async function getInternList() {
+async function getGuestList() {
   try {
-    const response = await fetch(INTERN_LIST_URL);
+    const response = await fetch(GUEST_LIST_URL);
     if (!response.ok) throw new Error("Failed to fetch intern list");
     return await response.json();
   } catch (err) {
@@ -27,24 +28,24 @@ async function getInternList() {
   }
 }
 
-async function updateInternList(data, reRender = true) {
+async function updateGuestList(data, reRender = true) {
   try {
-    const response = await fetch(INTERN_LIST_URL, {
+    const response = await fetch(GUEST_LIST_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error("Failed to update intern list");
+    if (!response.ok) throw new Error("Failed to update intern list"); 
 
-    console.log("Intern list updated successfully");
+    console.log("Guest list updated successfully");
 
     if (reRender) {
-      const interns = await getInternList();
-      if (interns) renderInterns(interns);
+      const guests = await getGuestList();
+      if (guests) renderGuests(guests);
     }
   } catch (err) {
-    console.error("Error updating intern list:", err);
+    console.error("Error updating guest list:", err);
   }
 }
 
@@ -52,7 +53,7 @@ async function editIntern(fullName, updates, reRender = true) {
   try {
     const encodedName = encodeURIComponent(fullName);
     const response = await fetch(
-      `http://192.168.0.87:3000/editIntern/${encodedName}`,
+      `http://192.168.0.88:3000/editIntern/${encodedName}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -65,8 +66,8 @@ async function editIntern(fullName, updates, reRender = true) {
     console.log(`Intern '${fullName}' updated successfully`);
 
     if (reRender) {
-      const interns = await getInternList();
-      if (interns) renderInterns(interns);
+      const interns = await getGuestList();
+      if (interns) renderGuests(interns);
     }
   } catch (err) {
     console.error("Error editing intern:", err);
@@ -77,7 +78,7 @@ async function deleteIntern(fullName, reRender = true) {
   try {
     const encodedName = encodeURIComponent(fullName);
     const response = await fetch(
-      `http://192.168.0.87:3000/deleteIntern/${encodedName}`,
+      `http://192.168.0.88:3000/deleteIntern/${encodedName}`,
       { method: "DELETE" }
     );
 
@@ -86,8 +87,8 @@ async function deleteIntern(fullName, reRender = true) {
     console.log(`Intern '${fullName}' deleted successfully`);
 
     if (reRender) {
-      const interns = await getInternList();
-      if (interns) renderInterns(interns);
+      const interns = await getGuestList();
+      if (interns) renderGuests(interns);
     }
   } catch (err) {
     console.error("Error deleting intern:", err);
@@ -112,30 +113,30 @@ async function logInternHours(internName, timeIn, timeOut) {
   }
 }
 
-function renderInterns(interns) {
+function renderGuests(interns) {
   listContainer.innerHTML = "";
 
   Object.entries(interns).forEach(([name, info]) => {
     const personDiv = document.createElement("div");
     personDiv.className = "person";
 
-    const userStatus = info.status === "Time-In" ? "Time-out" : "Time-in";
+    // const userStatus = info.status === "Time-In" ? "Time-out" : "Time-in";
 
     personDiv.innerHTML = `
       <div class="person-top">
         <p>${info.honorifics || "Mr."} ${info["full name"]} ${info.suffix || ""}</p>
-        <p>${info.totalHours || "0"} Hours</p>
+        ${info.logs?.[info.logs.length - 1]?.timeIn || "N/A"}
       </div>
       <div class="person-bottom">
         <p>${info.address || "No address"}</p>
-        <button 
-          class="Time" 
-          data-name="${name}" 
-          data-status="${info.status || "Time-Out"}">
-          ${userStatus}
-        </button>
       </div>
     `;
+    // <button 
+    //   class="Time" 
+    //   data-name="${name}" 
+    //   data-status="${info.status || "Time-Out"}">
+    //   ${userStatus}
+    // </button>
 
     personDiv.addEventListener("click", async (e) => {
       if (e.target.classList.contains("Time")) return;
@@ -195,7 +196,7 @@ listContainer.addEventListener("click", async (event) => {
       await editIntern(intern, updates, false);
       console.log(`Updated user: ${intern}`);
 
-      const internData = await getInternList();
+      const internData = await getGuestList();
       const fullIntern = internData[intern];
       const timeIn = fullIntern?.timeIn;
 
@@ -228,23 +229,7 @@ form.addEventListener("submit", async (event) => {
     };
   }
 
-  const newName = data["full name"];
-
-  if (selectedIntern) {
-    if (selectedIntern !== newName) {
-      await deleteIntern(selectedIntern, false);
-      await updateInternList(data, false);
-
-      const interns = await getInternList();
-      renderInterns(interns);
-    } else {
-      await editIntern(selectedIntern, data);
-    }
-      selectedIntern = null;
-  } else {
-    await updateInternList(data);
-  }
-
+  await updateGuestList(data);
   form.reset();
   toggleCrudButtons(false);
 });
@@ -256,7 +241,7 @@ backButton.addEventListener('click', () => {
 searchBar.addEventListener("input", async () => {
   const searchTerm = searchBar.value.toLowerCase();
 
-  const interns = await getInternList();
+  const interns = await getGuestList();
   if (!interns) return;
 
   const filtered = Object.fromEntries(
@@ -264,7 +249,7 @@ searchBar.addEventListener("input", async () => {
       name.toLowerCase().includes(searchTerm)
     ));
 
-  renderInterns(filtered);
+  renderGuests(filtered);
 });
 
 function toggleCrudButtons(show) {

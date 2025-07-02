@@ -6,12 +6,14 @@ const visitorCount = document.getElementById("visitor-count");
 const visitorCountSubtitle = document.getElementById("visitor-count-subtitle");
 const internCount = document.getElementById("intern-count");
 const guestCount = document.getElementById("guest-count");
+const barChartFilterType = document.getElementById("filter-type");
 
-const API_BASE_URL = "http://192.168.0.87:3000/api";
+const API_BASE_URL = "http://192.168.0.88:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
-Chart.defaults.backgroundColor = "#64E4B1";
 
+Chart.defaults.backgroundColor = "#64E4B1";
+let barChartInstance;
 
 const chartContexts = {
   bar: document.getElementById("myBarChart").getContext("2d"),
@@ -20,23 +22,29 @@ const chartContexts = {
   officeActivity: document.getElementById("officeActivity").getContext("2d"),
 };
 
-function createBarChart(ctx) {
+async function createBarChart(ctx, formatType = "daily", rawData) {
+
+  const { labels, data } = generateChartData(formatType, rawData);
+
   return new Chart(ctx, {
     type: "bar",
     data: {
-      labels: ["8:00", "9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00", "4:00", "5:00"],
-      datasets: [{ label: "Number of Visitors", data: [15, 5, 7, 20, 30, 20, 5, 2, 5, 10], borderWidth: 1 }],
+      labels,
+      datasets: [{
+        label: "Number of Visitors",
+        data,
+        borderWidth: 1,
+      }],
     },
     options: {
-      // maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
           ticks: { color: "#ffffff" },
-          title: { display: true, color: "#ffffff" },
+          title: { display: true, text: "Visitor Count", color: "#ffffff" },
         },
         x: {
-          title: { display: true, text: "Time of Day", color: "#ffffff" },
+          title: { display: true, text: getXLabel(formatType), color: "#ffffff" },
           ticks: { color: "#ffffff" },
         },
       },
@@ -47,6 +55,7 @@ function createBarChart(ctx) {
     },
   });
 }
+
 
 async function createDoughnutChart(ctx, title, labels, data, colors) {
   return new Chart(ctx, {
@@ -84,14 +93,14 @@ async function generateCharts() {
   const internListLength = Object.keys(interns || {}).length;
   const guestsListLength = Object.keys(guests || {}).length;
 
-  const returningVisitors = 10;
-  const newVisitors = 2;
+  const returningVisitors = internListLength;
+  const newVisitors = guestsListLength;
 
   const internship = internListLength;
   const tbiAssessment = 3;
-  const justVisiting = 1;
+  const justVisiting = guestsListLength;
 
-  createBarChart(chartContexts.bar);
+  barChartInstance = await createBarChart(chartContexts.bar, "daily");
 
   await createDoughnutChart(
     chartContexts.visitorCategory,
@@ -159,8 +168,9 @@ function renderInterns(interns) {
     personDiv.innerHTML = `
       <div class="person-top">
         <p>${info.honorifics || "Mr."} ${info["full name"]} ${info.suffix || ""}</p>
-        <p>${info.logs[0]?.date || "N/A"}</p>
-        <p>Time-in: ${info.logs[0]?.timeIn || "N/A"}</p>
+        <p>${(info.logs?.[info.logs.length - 1]?.date) || "N/A"}</p>
+        <p>In: ${(info.logs?.[info.logs.length - 1]?.timeIn) || "N/A"}</p>
+        <p>Out: ${(info.logs?.[info.logs.length - 1]?.timeOut) || "N/A"}</p>
       </div>
       <div class="person-bottom">
         <p>${info.address || "No address"}</p>
@@ -184,6 +194,41 @@ function generateColors(count) {
   return defaultColors.slice(0, count);
 }
 
+function generateChartData(type, rawData) {
+  switch (type) {
+    case "daily":
+      return {
+        labels: ["8:00", "9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00", "4:00", "5:00"],
+        data: rawData?.hourlyCounts || [15, 5, 7, 20, 30, 20, 5, 2, 5, 10],
+      };
+
+    case "weekly":
+      return {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        data: rawData?.dailyCounts || [50, 60, 40, 70, 90, 30, 20],
+      };
+
+    case "monthly":
+      return {
+        labels: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
+        data: rawData?.monthlyCounts || Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+      };
+
+    default:
+      return { labels: [], data: [] };
+  }
+}
+
+
+function getXLabel(type) {
+  switch (type) {
+    case "daily": return "Time of Day";
+    case "weekly": return "Day of the Week";
+    case "monthly": return "Day of the Month";
+    default: return "";
+  }
+}
+
 
 searchBar.addEventListener("input", async () => {
   const searchTerm = searchBar.value.toLowerCase();
@@ -199,10 +244,20 @@ searchBar.addEventListener("input", async () => {
   renderInterns(filtered);
 });
 
+barChartFilterType.addEventListener("change", async (e) => {
+  const type = e.target.value;
 
-  const d1 = `M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z`;
+  if (barChartInstance) {
+    barChartInstance.destroy();
+  }
 
-  const d2 = `M225.5 0.75H340.5C348.37 0.75 354.75 7.12994 354.75 15V39.5C354.75 48.1985 361.802 55.25 370.5 55.25H634C641.87 55.25 648.25 61.6299 648.25 69.5V516.5C648.25 524.37 641.87 530.75 634 530.75H15C7.12994 530.75 0.75 524.37 0.75 516.5V69.5C0.75 61.6299 7.12994 55.25 15 55.25H195.5C204.198 55.25 211.25 48.1985 211.25 39.5V15C211.25 7.12994 217.63 0.75 225.5 0.75Z`;
+  barChartInstance = await createBarChart(chartContexts.bar, type);
+})
+
+
+const d1 = `M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z`;
+
+const d2 = `M225.5 0.75H340.5C348.37 0.75 354.75 7.12994 354.75 15V39.5C354.75 48.1985 361.802 55.25 370.5 55.25H634C641.87 55.25 648.25 61.6299 648.25 69.5V516.5C648.25 524.37 641.87 530.75 634 530.75H15C7.12994 530.75 0.75 524.37 0.75 516.5V69.5C0.75 61.6299 7.12994 55.25 15 55.25H195.5C204.198 55.25 211.25 48.1985 211.25 39.5V15C211.25 7.12994 217.63 0.75 225.5 0.75Z`;
 
 function animateMorph(from, to, duration = 80) {
   const interpolator = flubber.interpolate(from, to);
@@ -211,7 +266,7 @@ function animateMorph(from, to, duration = 80) {
   const step = (timestamp) => {
     if (!startTime) startTime = timestamp;
     const elapsed = timestamp - startTime;
-    const t = Math.min(elapsed / duration, 1); // clamp to [0, 1]
+    const t = Math.min(elapsed / duration, 1);
 
     morphPath.setAttribute("d", interpolator(t));
 
