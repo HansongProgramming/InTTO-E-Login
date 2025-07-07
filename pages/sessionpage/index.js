@@ -100,6 +100,9 @@ function showAdminLoginInterface() {
   const search = document.createElement("div");
   search.className = "search";
 
+  const searchlebutton = document.createElement("div");
+  searchlebutton.className = "search-buttones";
+
   const passwordInput = document.createElement("input");
   passwordInput.type = "password";
   passwordInput.placeholder = "Enter Password";
@@ -113,7 +116,7 @@ function showAdminLoginInterface() {
 
   const backButton = document.createElement("p");
   backButton.textContent = "Back";
-  backButton.className = "back-button";
+  backButton.className = "back-buttoner";
 
   loginButton.addEventListener("click", async () => {
     const password = passwordInput.value.trim();
@@ -145,8 +148,9 @@ function showAdminLoginInterface() {
   backButton.addEventListener("click", hideAdminLoginInterface);
 
   search.appendChild(passwordInput);
-  search.appendChild(loginButton);
-  search.appendChild(backButton);
+  search.appendChild(searchlebutton);
+  searchlebutton.appendChild(loginButton);
+  searchlebutton.appendChild(backButton);
 
   wrapper.appendChild(search);
   container.appendChild(wrapper);

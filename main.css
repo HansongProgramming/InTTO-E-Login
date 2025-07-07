@@ -338,6 +338,11 @@ option {
   background-color: black;
 }
 
+.search-buttones{
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .back-button{
   background-color: rgba(0, 0, 0, 0);
   outline: none;
