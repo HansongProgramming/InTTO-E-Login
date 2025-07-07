@@ -2,10 +2,12 @@
   "dependencies": {
     "chart.js": "^4.4.1",
     "cors": "^2.8.5",
+    "dotenv": "^17.0.1",
     "export-to-csv": "^1.4.0",
     "express": "^5.1.0",
     "moment": "^2.30.1",
     "nodemon": "^3.1.10",
+    "vite": "^7.0.2",
     "weather-js": "^2.0.0"
   },
   "devDependencies": {

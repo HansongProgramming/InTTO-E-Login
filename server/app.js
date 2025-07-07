@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const moment = require('moment');
 const cors = require('cors');
@@ -17,6 +18,18 @@ app.use(express.static(path.join(__dirname)));
 //ROUTES
 app.get('/', (req, res) => {
   res.send('Hello World!');
+});
+
+// ADMIN LOGIN
+app.post('/adminLogin', (req, res) => {
+  const passwordInput = req.body.password;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (passwordInput === adminPassword) {
+    res.status(200).json({ success: true, message: "Access granted" });
+  } else {
+    res.status(401).json({ success: false, message: "Invalid password" });
+  }
 });
 
 // BARCODE SCANNER

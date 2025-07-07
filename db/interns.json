@@ -5,7 +5,7 @@
     "email": "moment@gmail.com",
     "address": "CITCS",
     "honorifics": "Mr.",
-    "status": "Time-Out",
+    "status": "Time-In",
     "logs": [
       {
         "date": "2025-07-01",
@@ -16,6 +16,10 @@
         "date": "2025-07-02",
         "timeIn": "10:35 am",
         "timeOut": "01:13 pm"
+      },
+      {
+        "date": "2025-07-07",
+        "timeIn": "11:41 am"
       }
     ],
     "totalHours": 3.75

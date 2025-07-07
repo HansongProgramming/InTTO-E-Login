@@ -583,6 +583,26 @@ option {
   flex-direction: column;
 }
 
+.back-button {
+  text-align: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.back-button:hover {
+  color: #147470;
+}
+.admin-form-wrapper {
+  position: relative;
+  z-index: 1000;
+}
+
+.password-input {
+  position: relative;
+  z-index: 1001;
+  pointer-events: auto;
+}
+
 .admin-back-button{
   background-color: rgba(0, 0, 0, 0);
   outline: none;

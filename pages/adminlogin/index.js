@@ -100,7 +100,7 @@ async function generateCharts() {
   const tbiAssessment = 3;
   const justVisiting = guestsListLength;
 
-  barChartInstance = await createBarChart(chartContexts.bar, "daily");
+  barChartInstance = await createBarChart(chartContexts.bar, "daily"); 
 
   await createDoughnutChart(
     chartContexts.visitorCategory,
@@ -195,23 +195,59 @@ function generateColors(count) {
 }
 
 function generateChartData(type, rawData) {
+  const logs = rawData?.logs || [];
+  
+  const parseTime = (str) => {
+    const [time, modifier] = str.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (modifier === "pm" && hours !== 12) hours += 12;
+    if (modifier === "am" && hours === 12) hours = 0;
+
+    return hours + minutes / 60;
+  };
+
+  if (!Array.isArray(logs)) console.error("Invalid data format!!");
+
   switch (type) {
     case "daily":
+      const hourBuckets = new Array(10).fill(0);
+      logs.forEach((log) => {
+        if(log.timeIn) {
+          const hour = Math.floor(parseTime(log.timeIn));
+          const index = hour - 8;
+          if (index >= 0 && index < hourBuckets.length) {
+            hourBuckets[index]++;
+          }
+        }
+      });
       return {
         labels: ["8:00", "9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00", "4:00", "5:00"],
-        data: rawData?.hourlyCounts || [15, 5, 7, 20, 30, 20, 5, 2, 5, 10],
+        data: hourBuckets
+        // data: rawData?.hourlyCounts || [15, 5, 7, 20, 30, 20, 5, 2, 5, 10],
       };
 
     case "weekly":
-      return {
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        data: rawData?.dailyCounts || [50, 60, 40, 70, 90, 30, 20],
-      };
+      const weeklyMap = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 };
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const dayCounts = new Array(7).fill(0);
+      logs.forEach((log) => {
+        const day = new Date(log.date).toLocaleDateString("en-US", {weekday: "short"});
+        const index = weeklyMap[day];
+        if (index != null) dayCounts[index]++;
+      });
+      return { labels: days, data: dayCounts };
+      // data: rawData?.dailyCounts || [50, 60, 40, 70, 90, 30, 20],
 
     case "monthly":
+      const monthlyDayCounts = Array.from({ length: 31 }, () => 0);
+      logs.forEach(log => {
+        const date = new Date(log.date);
+        const day = date.getDate();
+        monthlyDayCounts[day - 1]++;
+      });
       return {
-        labels: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
-        data: rawData?.monthlyCounts || Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+        labels: dayCounts.map((_, i) => `Day ${i + 1}`),
+        data: monthlyDayCounts
       };
 
     default:
