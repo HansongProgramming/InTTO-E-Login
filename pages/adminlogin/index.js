@@ -1,3 +1,5 @@
+const { ipcRenderer } = require('electron');
+
 const listContainer = document.getElementById("list");
 const searchBar = document.getElementById("search-bar");
 const morphPath = document.getElementById("morphPath");
@@ -7,6 +9,9 @@ const visitorCountSubtitle = document.getElementById("visitor-count-subtitle");
 const internCount = document.getElementById("intern-count");
 const guestCount = document.getElementById("guest-count");
 const barChartFilterType = document.getElementById("filter-type");
+
+const exportInternButton = document.getElementById("export-intern-button");
+const exportGuestButton = document.getElementById("export-guest-button");
 
 const API_BASE_URL = "http://192.168.0.88:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
@@ -143,6 +148,7 @@ async function getGuestList() {
     console.error("Error fetching guest list:", err);
   }
 }
+
 async function setupOfficeTimeline() {
   const interns = await getInternList();
   const guests = await getGuestList();
@@ -157,6 +163,68 @@ async function setupOfficeTimeline() {
   internCount.textContent = `${internListLength} ${internListLength === 1 ? 'Intern' : 'Interns'}`;
   guestCount.textContent = `${guestsListLength} ${guestsListLength === 1 ? 'Guest' : 'Guests'}`;
 }
+
+async function exportDataToCSV(dataType) {
+  let rawData;
+
+  if (dataType === "interns") {
+    rawData = await getInternList();
+  } else if (dataType === "guests") {
+    rawData = await getGuestList();
+  } else {
+    console.error("Invalid data type");
+    return;
+  }
+
+  const rows = [];
+
+  for (const id in rawData) {
+    const entry = rawData[id];
+    const logs = entry.logs || [];
+
+    logs.forEach(log => {
+      rows.push({
+        ID: id,
+        "Full Name": `${entry.honorifics || ""} ${entry["full name"]}`.trim(),
+        Email: entry.email,
+        Address: entry.address,
+        Status: entry.status,
+        "Total Hours": entry.totalHours ?? "",
+        Date: log.date,
+        "Time In": log.timeIn || "",
+        "Time Out": log.timeOut || ""
+      });
+    });
+  }
+
+  if (rows.length === 0) {
+    alert("No data to export.");
+    return;
+  }
+
+  const headers = Object.keys(rows[0]);
+  const csvRows = [
+    headers.join(","), // CSV header row
+    ...rows.map(row =>
+      headers.map(field => `"${(row[field] ?? "").toString().replace(/"/g, '""')}"`).join(",")
+    )
+  ];
+
+  const csvContent = csvRows.join("\n");
+
+  // Option A: Download in-browser (renderer process)
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${dataType}_log_export.csv`;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 
 function renderInterns(interns) {
   listContainer.innerHTML = "";
@@ -196,7 +264,7 @@ function generateColors(count) {
 
 function generateChartData(type, rawData) {
   const logs = rawData?.logs || [];
-  
+
   const parseTime = (str) => {
     const [time, modifier] = str.split(" ");
     let [hours, minutes] = time.split(":").map(Number);
@@ -289,6 +357,13 @@ barChartFilterType.addEventListener("change", async (e) => {
 
   barChartInstance = await createBarChart(chartContexts.bar, type);
 })
+
+exportInternButton.addEventListener("click", async () => {
+  exportDataToCSV("interns");
+});
+exportGuestButton.addEventListener("click", async () => {
+  exportDataToCSV("guests");
+});
 
 
 const d1 = `M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z`;

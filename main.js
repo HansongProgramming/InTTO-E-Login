@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require("path");
+const fs = require('fs');
 
 const startServer = require("./server/app");
 const isMac = process.platform === "darwin";
@@ -108,4 +109,22 @@ ipcMain.on('open-confirm-window', () => {
 
 ipcMain.on("open-time-window", (_event, internId) => {
   createToggleTimeWindow(internId);
+});
+
+ipcMain.on("save-csv-file", async (event, { content, filename }) => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: "Save CSV",
+    defaultPath: filename,
+    filters: [{ name: "CSV Files", extensions: ["csv"] }]
+  });
+
+  if (!canceled && filePath) {
+    fs.writeFile(filePath, content, "utf8", (err) => {
+      if (err) {
+        console.error("Error saving CSV:", err);
+      } else {
+        console.log("CSV saved to", filePath);
+      }
+    });
+  }
 });
