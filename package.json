@@ -1,4 +1,24 @@
 {
+  "name": "intto-e-login",
+  "productName": "InTTO E-Login",
+  "version": "1.0.0",
+  "description": "InTTO electronic login system",
+  "main": "main.js",
+  "author": "Hans Harold Lee. Flores && Johann Sebastian Philip V. Liwag",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HansongProgramming/InTTO-E-Login.git"
+  },
+  "homepage": "https://github.com/HansongProgramming/InTTO-E-Login#readme",
+  "bugs": {
+    "url": "https://github.com/HansongProgramming/InTTO-E-Login/issues"
+  },
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "chart.js": "^4.4.1",
     "cors": "^2.8.5",
@@ -11,24 +31,33 @@
     "weather-js": "^2.0.0"
   },
   "devDependencies": {
-    "electron": "^36.4.0"
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12"
   },
-  "name": "intto-e-login",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/HansongProgramming/InTTO-E-Login.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/HansongProgramming/InTTO-E-Login/issues"
-  },
-  "homepage": "https://github.com/HansongProgramming/InTTO-E-Login#readme"
+  "build": {
+    "appId": "com.intto.e-login",
+    "productName": "InTTO E-Login",
+    "files": [
+      "db/**/*",
+      "pages/**/*",
+      "server/**/*",
+      "main.js",
+      "main.css",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "images",
+        "to": "images",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "public/.env",
+        "to": ".env"
+      }
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  }
 }
