@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://192.168.0.88:3000/api";
+const API_BASE_URL = "http://127.0.0.1:3000/api";
 const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
 
 const form = document.getElementById("user-registry");
@@ -53,7 +53,7 @@ async function editIntern(fullName, updates, reRender = true) {
   try {
     const encodedName = encodeURIComponent(fullName);
     const response = await fetch(
-      `http://192.168.0.88:3000/editIntern/${encodedName}`,
+      `http://127.0.0.1:3000/editIntern/${encodedName}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ async function deleteIntern(fullName, reRender = true) {
   try {
     const encodedName = encodeURIComponent(fullName);
     const response = await fetch(
-      `http://192.168.0.88:3000/deleteIntern/${encodedName}`,
+      `http://127.0.0.1:3000/deleteIntern/${encodedName}`,
       { method: "DELETE" }
     );
 

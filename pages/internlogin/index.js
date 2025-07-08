@@ -1,7 +1,7 @@
-const API_BASE_URL = "http://192.168.0.88:3000/api";
+const API_BASE_URL = "http://127.0.0.1:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
-const EDIT_INTERN_URL = id => `http://192.168.0.88:3000/editIntern/${encodeURIComponent(id)}`;
-const DELETE_INTERN_URL = name => `http://192.168.0.88:3000/deleteIntern/${encodeURIComponent(name)}`;
+const EDIT_INTERN_URL = id => `http://127.0.0.1:3000/editIntern/${encodeURIComponent(id)}`;
+const DELETE_INTERN_URL = name => `http://127.0.0.1:3000/deleteIntern/${encodeURIComponent(name)}`;
 
 const form = document.getElementById("user-registry");
 const searchBar = document.getElementById("search-bar");
