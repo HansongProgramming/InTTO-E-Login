@@ -46,7 +46,7 @@ async function renderWeatherDateTime() {
 
 async function handleAdminLogin(data) {
   try {
-    const response = await fetch('http://192.168.0.88:3000/adminLogin', {
+    const response = await fetch('http://192.168.0.66:3000/adminLogin', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

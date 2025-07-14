@@ -13,7 +13,7 @@ const barChartFilterType = document.getElementById("filter-type");
 const exportInternButton = document.getElementById("export-intern-button");
 const exportGuestButton = document.getElementById("export-guest-button");
 
-const API_BASE_URL = "http://192.168.0.88:3000/api";
+const API_BASE_URL = "http://192.168.0.66:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
 

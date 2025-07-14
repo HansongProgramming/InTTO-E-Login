@@ -1,27 +1,18 @@
 {
-  "22-5312-997": {
+  "22-1241-149": {
     "suffix": "",
-    "full name": "Joe Moment",
-    "email": "moment@gmail.com",
-    "address": "CITCS",
+    "full name": "Hans Harold",
+    "email": "Wack@gmail.com",
+    "address": "awaudawdawu",
     "honorifics": "Mr.",
     "status": "Time-In",
     "logs": [
       {
-        "date": "2025-07-01",
-        "timeIn": "11:04 am",
-        "timeOut": "12:11 pm"
-      },
-      {
-        "date": "2025-07-02",
-        "timeIn": "10:35 am",
-        "timeOut": "01:13 pm"
-      },
-      {
         "date": "2025-07-07",
-        "timeIn": "11:41 am"
+        "timeIn": "04:14 pm",
+        "timeOut": ""
       }
     ],
-    "totalHours": 3.75
+    "totalHours": 0
   }
 }
