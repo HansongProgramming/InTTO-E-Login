@@ -305,6 +305,96 @@ app.post('/api/guestList', (req, res) => {
 
   });
 });
+
+app.patch('/api/editGuest/:name', (req, res) => {
+  const guestName = decodeURIComponent(req.params.name).trim(); // full name used as key
+  const updates = req.body;
+
+  fs.readFile(GUEST_FILE, 'utf8', (err, fileData) => {
+    if (err) return res.status(500).json({ error: 'Failed to read guest file' });
+
+    let guestList = {};
+    try {
+      guestList = JSON.parse(fileData);
+    } catch {
+      return res.status(500).json({ error: 'Invalid JSON format' });
+    }
+
+    const existing = guestList[guestName];
+    if (!existing) return res.status(404).json({ error: `Guest '${guestName}' not found` });
+
+    if (!Array.isArray(existing.logs)) existing.logs = [];
+
+    const today = moment().format("YYYY-MM-DD");
+    let currentLog = existing.logs.find(log => log.date === today);
+
+    if (!currentLog) {
+      currentLog = { date: today };
+      existing.logs.push(currentLog);
+    }
+
+    if (updates.status === "Time-In" && updates.timeIn) {
+      currentLog.timeIn = updates.timeIn;
+    }
+
+    if (updates.status === "Time-Out" && updates.timeOut) {
+      currentLog.timeOut = updates.timeOut;
+    }
+
+    const { logs, timeIn, timeOut, ...rest } = updates;
+
+    const merged = {
+      ...existing,
+      ...rest,
+      logs: existing.logs,
+    };
+
+    guestList[guestName] = merged;
+
+    fs.writeFile(GUEST_FILE, JSON.stringify(guestList, null, 2), 'utf8', err => {
+      if (err) return res.status(500).json({ error: 'Failed to write guest file' });
+      res.json({ message: `Updated guest '${guestName}'`, data: guestList[guestName] });
+    });
+  });
+});
+
+app.delete('/api/deleteGuest/:name', (req, res) => {
+  const guestName = decodeURIComponent(req.params.name).trim();
+
+  fs.readFile(GUEST_FILE, 'utf8', (err, fileData) => {
+    if (err) {
+      console.error('Error reading guest file:', err);
+      return res.status(500).json({ error: 'Failed to read guest file' });
+    }
+
+    let guestList = {};
+
+    try {
+      guestList = JSON.parse(fileData);
+    } catch (parseErr) {
+      console.error('Error parsing guest JSON:', parseErr);
+      return res.status(500).json({ error: 'Invalid JSON format' });
+    }
+
+    if (!guestList[guestName]) {
+      return res.status(404).json({ error: `Guest '${guestName}' not found` });
+    }
+
+    delete guestList[guestName];
+
+    fs.writeFile(GUEST_FILE, JSON.stringify(guestList, null, 2), 'utf8', (err) => {
+      if (err) {
+        console.error('Error writing guest file:', err);
+        return res.status(500).json({ error: 'Failed to write guest file' });
+      }
+
+      res.status(200).json({ message: `Guest '${guestName}' deleted successfully` });
+    });
+  });
+});
+
+
+
 // EXPORT startServer FUNCTION
 module.exports = function startServer(callback) {
   app.listen(PORT, IP_ADDRESS, () => {

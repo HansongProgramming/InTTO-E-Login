@@ -1,13 +1,17 @@
 const API_BASE_URL = "http://127.0.0.1:3000/api";
 const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
 
+const EDIT_GUEST_URL = (name) => `${API_BASE_URL}/editGuest/${encodeURIComponent(name)}`;
+const DELETE_GUEST_URL = (name) => `${API_BASE_URL}/deleteGuest/${encodeURIComponent(name)}`;
+
+
 const form = document.getElementById("user-registry");
 const searchBar = document.getElementById("search-bar");
 const listContainer = document.getElementById("list");
 const toggleButton = document.getElementById("toggle-status");
 const backButton = document.getElementById('back-button');
 
-let selectedIntern = null;
+let selectedGuest = null;
 
 window.onload = async () => {
   const guests = await getGuestList();
@@ -21,10 +25,10 @@ window.onload = async () => {
 async function getGuestList() {
   try {
     const response = await fetch(GUEST_LIST_URL);
-    if (!response.ok) throw new Error("Failed to fetch intern list");
+    if (!response.ok) throw new Error("Failed to fetch guest list");
     return await response.json();
   } catch (err) {
-    console.error("Error fetching intern list:", err);
+    console.error("Error fetching guest list:", err);
   }
 }
 
@@ -36,7 +40,7 @@ async function updateGuestList(data, reRender = true) {
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error("Failed to update intern list"); 
+    if (!response.ok) throw new Error("Failed to update guest list"); 
 
     console.log("Guest list updated successfully");
 
@@ -47,58 +51,55 @@ async function updateGuestList(data, reRender = true) {
   } catch (err) {
     console.error("Error updating guest list:", err);
   }
+  window.location.reload();
 }
 
-async function editIntern(fullName, updates, reRender = true) {
+async function editGuest(fullName, updates, reRender = true) {
   try {
-    const encodedName = encodeURIComponent(fullName);
-    const response = await fetch(
-      `http://127.0.0.1:3000/editIntern/${encodedName}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-      }
-    );
+    const response = await fetch(EDIT_GUEST_URL(fullName), {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
 
-    if (!response.ok) throw new Error("Failed to edit intern");
+    if (!response.ok) throw new Error("Failed to edit guest");
 
-    console.log(`Intern '${fullName}' updated successfully`);
+    console.log(`Guest '${fullName}' updated successfully`);
 
     if (reRender) {
-      const interns = await getGuestList();
-      if (interns) renderGuests(interns);
+      const guests = await getGuestList();
+      if (guests) renderGuests(guests);
     }
   } catch (err) {
-    console.error("Error editing intern:", err);
+    console.error("Error editing guest:", err);
   }
+  window.location.reload();
 }
 
-async function deleteIntern(fullName, reRender = true) {
+
+async function deleteGuest(fullName, reRender = true) {
   try {
-    const encodedName = encodeURIComponent(fullName);
-    const response = await fetch(
-      `http://127.0.0.1:3000/deleteIntern/${encodedName}`,
-      { method: "DELETE" }
-    );
+    const response = await fetch(DELETE_GUEST_URL(fullName), { method: "DELETE" });
 
-    if (!response.ok) throw new Error("Failed to delete intern");
+    if (!response.ok) throw new Error("Failed to delete guest");
 
-    console.log(`Intern '${fullName}' deleted successfully`);
+    console.log(`Guest '${fullName}' deleted successfully`);
 
     if (reRender) {
-      const interns = await getGuestList();
-      if (interns) renderGuests(interns);
+      const guests = await getGuestList();
+      if (guests) renderGuests(guests);
     }
   } catch (err) {
-    console.error("Error deleting intern:", err);
+    console.error("Error deleting guest:", err);
   }
+  window.location.reload();
 }
 
-async function logInternHours(internName, timeIn, timeOut) {
+
+async function logGuestHours(guestName, timeIn, timeOut) {
   const date = moment().format("YYYY-MM-DD");
 
-  const res = await fetch(`${API_BASE_URL}/hours/${encodeURIComponent(internName)}`, {
+  const res = await fetch(`${API_BASE_URL}/hours/${encodeURIComponent(guestName)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -113,14 +114,14 @@ async function logInternHours(internName, timeIn, timeOut) {
   }
 }
 
-function renderGuests(interns) {
+function renderGuests(guests) {
   listContainer.innerHTML = "";
 
-  Object.entries(interns).forEach(([name, info]) => {
+  Object.entries(guests).forEach(([name, info]) => {
     const personDiv = document.createElement("div");
     personDiv.className = "person";
 
-    // const userStatus = info.status === "Time-In" ? "Time-out" : "Time-in";
+    const userStatus = info.status === "Time-In" ? "Time-out" : "Time-in";
 
     personDiv.innerHTML = `
       <div class="person-top">
@@ -130,31 +131,31 @@ function renderGuests(interns) {
       <div class="person-bottom">
         <p>${info.address || "No address"}</p>
       </div>
+      <button 
+        class="Time" 
+        data-name="${name}" 
+        data-status="${info.status || "Time-Out"}">
+        ${userStatus}
+      </button>
     `;
-    // <button 
-    //   class="Time" 
-    //   data-name="${name}" 
-    //   data-status="${info.status || "Time-Out"}">
-    //   ${userStatus}
-    // </button>
 
     personDiv.addEventListener("click", async (e) => {
       if (e.target.classList.contains("Time")) return;
 
-      if (selectedIntern === name) {
-        selectedIntern = null;
+      if (selectedGuest === name) {
+        selectedGuest = null;
         form.reset();
         toggleCrudButtons(false);
         return;
       }
 
-      const intern = interns[name];
-      selectedIntern = name;
-      form.honorifics.value = intern.honorifics || "Mr.";
-      form.suffix.value = intern.suffix || "";
+      const guest = guests[name];
+      selectedGuest = name;
+      form.honorifics.value = guest.honorifics || "Mr.";
+      form.suffix.value = guest.suffix || "";
       form["full name"].value = name;
-      form.email.value = intern.email || "";
-      form.address.value = intern.address || "";
+      form.email.value = guest.email || "";
+      form.address.value = guest.address || "";
       toggleCrudButtons(true);
     });
 
@@ -174,7 +175,7 @@ function renderTime() {
 listContainer.addEventListener("click", async (event) => {
   if (event.target.classList.contains("Time")) {
     const button = event.target;
-    const intern = button.dataset.name;
+    const guest = button.dataset.name;
     const currentStatus = button.dataset.status || "Time-Out";
 
     const isTimeIn = currentStatus === "Time-In";
@@ -193,15 +194,15 @@ listContainer.addEventListener("click", async (event) => {
     button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
 
     try {
-      await editIntern(intern, updates, false);
-      console.log(`Updated user: ${intern}`);
+      await editGuest(guest, updates, false);
+      console.log(`Updated user: ${guest}`);
 
-      const internData = await getGuestList();
-      const fullIntern = internData[intern];
-      const timeIn = fullIntern?.timeIn;
+      const guestData = await getGuestList();
+      const fullguest = guestData[guest];
+      const timeIn = fullguest?.timeIn;
 
       if (isTimeIn && timeIn) {
-        await logInternHours(intern, timeIn, now);
+        await logGuestHours(guest, timeIn, now);
       }
     } catch (err) {
       console.error(err);
@@ -241,11 +242,11 @@ backButton.addEventListener('click', () => {
 searchBar.addEventListener("input", async () => {
   const searchTerm = searchBar.value.toLowerCase();
 
-  const interns = await getGuestList();
-  if (!interns) return;
+  const guests = await getGuestList();
+  if (!guests) return;
 
   const filtered = Object.fromEntries(
-    Object.entries(interns).filter(([name]) =>
+    Object.entries(guests).filter(([name]) =>
       name.toLowerCase().includes(searchTerm)
     ));
 
@@ -259,7 +260,7 @@ function toggleCrudButtons(show) {
   if (!updateBtn) {
     updateBtn = document.createElement("button");
     updateBtn.id = "update-btn";
-    updateBtn.textContent = "Update Intern";
+    updateBtn.textContent = "Update Guest";
     updateBtn.type = "button";
     form.appendChild(updateBtn);
   }
@@ -267,7 +268,7 @@ function toggleCrudButtons(show) {
   if (!deleteBtn) {
     deleteBtn = document.createElement("button");
     deleteBtn.id = "delete-btn";
-    deleteBtn.textContent = "Delete Intern";
+    deleteBtn.textContent = "Delete Guest";
     deleteBtn.type = "button";
     deleteBtn.style.marginLeft = "10px";
     form.appendChild(deleteBtn);
@@ -280,20 +281,20 @@ function toggleCrudButtons(show) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    editIntern(selectedIntern, data);
+    editGuest(selectedGuest, data);
     form.reset();
 
-    selectedIntern = null;
+    selectedGuest = null;
     toggleCrudButtons(false);
-    selectedIntern = null;
+    selectedGuest = null;
   };
 
   deleteBtn.onclick = () => {
-    if (confirm(`Are you sure you want to delete ${selectedIntern}?`)) {
-      deleteIntern(selectedIntern);
+    if (confirm(`Are you sure you want to delete ${selectedGuest}?`)) {
+      deleteGuest(selectedGuest);
       form.reset();
       toggleCrudButtons(false);
-      selectedIntern = null;
+      selectedGuest = null;
     }
   };
 }
@@ -303,7 +304,7 @@ document.addEventListener("click", (event) => {
   const isClickInsideList = listContainer.contains(event.target);
 
   if (!isClickInsideForm && !isClickInsideList) {
-    selectedIntern = null;
+    selectedGuest = null;
     form.reset();
     toggleCrudButtons(false);
   }

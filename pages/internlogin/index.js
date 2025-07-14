@@ -104,6 +104,7 @@ function renderTime() {
 
 function handleInternSelect(name, intern) {
   if (selectedIntern === name) {
+    console.log("moment");
     selectedIntern = null;
     form.reset();
     toggleCrudButtons(false);

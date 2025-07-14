@@ -1,16 +1,16 @@
 {
-  "Wahid alamada": {
+  "Joe Moment": {
     "suffix": "",
-    "full name": "Wahid alamada",
-    "email": "wid@wadaw",
-    "address": "event",
+    "full name": "Joe Moment",
+    "email": "moment@gmail.com",
+    "address": "TBI",
     "honorifics": "Mr.",
-    "status": "Time-In",
+    "status": "Time-Out",
     "logs": [
       {
         "date": "2025-07-14",
-        "timeIn": "03:13 pm",
-        "timeOut": ""
+        "timeIn": "02:39 pm",
+        "timeOut": "02:39 pm"
       }
     ]
   }
