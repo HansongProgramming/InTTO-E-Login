@@ -81,10 +81,13 @@
         </div>
         <div class="export-container">
           <div class="export" id="export-intern-button">
-            <p>EXPORT INTERN CSV</p>
+            <p>Export Intern CSV</p>
           </div>
           <div class="export" id="export-guest-button">
-            <p>EXPORT GUEST CSV</p>
+            <p>Export Guest CSV</p>
+          </div>
+          <div class="export" id="export-analytics-button">
+            <p>Export Data Analytics</p>
           </div>
         </div>
         <div class="list" id="list">
@@ -169,6 +172,7 @@
         <div class="admin-tabs">
           <button class="tab1">Office Statistics</button>
           <button class="tab2">Timelines</button>
+          <button class="tab3">Events</button>
         </div>
         <div class="admin-data-tab1">
           <div class="admin-tab1-content1">
@@ -200,6 +204,13 @@
             <option value="yearly">Year</option>
           </select>
           <canvas id="myBarChart"></canvas>
+        </div>
+        <div class="admin-data-tab3">
+          <div class="events-container">
+            <h1>Create an Event</h1>
+            <input type="text" placeholder="Event Name or Title:">
+            <button>Start Event</button>
+          </div>
         </div>
       </div>
     </div>

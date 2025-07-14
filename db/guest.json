@@ -1,1 +1,17 @@
-{}
+{
+  "Wahid alamada": {
+    "suffix": "",
+    "full name": "Wahid alamada",
+    "email": "wid@wadaw",
+    "address": "event",
+    "honorifics": "Mr.",
+    "status": "Time-In",
+    "logs": [
+      {
+        "date": "2025-07-14",
+        "timeIn": "03:13 pm",
+        "timeOut": ""
+      }
+    ]
+  }
+}
