@@ -1,1 +1,17 @@
-{}
+{
+  "Joe Moment": {
+    "suffix": "",
+    "full name": "Joe Moment",
+    "email": "moment@gmail.com",
+    "address": "TBI",
+    "honorifics": "Mr.",
+    "status": "Time-Out",
+    "logs": [
+      {
+        "date": "2025-07-14",
+        "timeIn": "02:39 pm",
+        "timeOut": "02:39 pm"
+      }
+    ]
+  }
+}

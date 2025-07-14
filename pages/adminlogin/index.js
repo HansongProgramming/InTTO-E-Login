@@ -12,6 +12,7 @@ const barChartFilterType = document.getElementById("filter-type");
 
 const exportInternButton = document.getElementById("export-intern-button");
 const exportGuestButton = document.getElementById("export-guest-button");
+const exportDataButton = document.getElementById("export-data-button");
 
 const API_BASE_URL = "http://127.0.0.1:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
@@ -241,6 +242,48 @@ async function exportDataToCSV(dataType) {
   URL.revokeObjectURL(url);
 }
 
+async function exportChartData() {
+  if (!barChartInstance) {
+    alert("Chart not generated yet.");
+    return;
+  }
+
+  const labels = barChartInstance.data.labels;
+  const values = barChartInstance.data.datasets[0].data;
+
+  if (!labels || !values || labels.length !== values.length) {
+    alert("No chart data to export.");
+    return;
+  }
+
+  const rows = labels.map((label, i) => ({
+    Label: label,
+    "Visitor Count": values[i]
+  }));
+
+  const headers = Object.keys(rows[0]);
+  const csvRows = [
+    headers.join(","),
+    ...rows.map(row =>
+      headers.map(field =>
+        `"${(row[field] ?? "").toString().replace(/"/g, '""')}"`
+      ).join(",")
+    )
+  ];
+
+  const csvContent = csvRows.join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "chart_data_export.csv";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 
 function renderInterns(interns) {
   listContainer.innerHTML = "";
@@ -369,7 +412,6 @@ function getXLabel(type) {
   }
 }
 
-
 searchBar.addEventListener("input", async () => {
   const searchTerm = searchBar.value.toLowerCase();
   const interns = await getInternList();
@@ -400,12 +442,9 @@ barChartFilterType.addEventListener("change", async (e) => {
   barChartInstance = await createBarChart(chartContexts.bar, type, rawData);
 })
 
-exportInternButton.addEventListener("click", async () => {
-  exportDataToCSV("interns");
-});
-exportGuestButton.addEventListener("click", async () => {
-  exportDataToCSV("guests");
-});
+exportInternButton.addEventListener("click", async () => exportDataToCSV("interns"));
+exportGuestButton.addEventListener("click", async () => exportDataToCSV("guests") );
+exportDataButton.addEventListener("click", async () => exportChartData() );
 
 
 const d1 = `M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z`;
