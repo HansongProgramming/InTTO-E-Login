@@ -46,7 +46,7 @@ async function renderWeatherDateTime() {
 
 async function handleAdminLogin(data) {
   try {
-    const response = await fetch('http://192.168.0.66:3000/adminLogin', {
+    const response = await fetch('http://127.0.0.1:3000/adminLogin', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -98,7 +98,7 @@ function showAdminLoginInterface() {
   wrapper.style.zIndex = '1000';        // High enough to be on top
 
   const search = document.createElement("div");
-  search.className = "search";
+  search.className = "admin-search";
 
   const searchlebutton = document.createElement("div");
   searchlebutton.className = "search-buttones";

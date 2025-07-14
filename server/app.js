@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 const calculateCappedTotalHours = require('./utils/calculate');
-const { PORT, TOTAL_INTERN_HOURS, INTERN_FILE, GUEST_FILE } = require('./config');
+const { PORT, TOTAL_INTERN_HOURS, INTERN_FILE, GUEST_FILE, IP_ADDRESS } = require('./config');
 
 const app = express();
 
@@ -305,12 +305,10 @@ app.post('/api/guestList', (req, res) => {
 
   });
 });
-
-
 // EXPORT startServer FUNCTION
 module.exports = function startServer(callback) {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Listening on http://localhost:${PORT}`);
+  app.listen(PORT, IP_ADDRESS, () => {
+    console.log(`Listening on http://${IP_ADDRESS}:${PORT}`);
     callback?.();
   });
 };

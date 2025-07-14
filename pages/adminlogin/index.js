@@ -13,7 +13,7 @@ const barChartFilterType = document.getElementById("filter-type");
 const exportInternButton = document.getElementById("export-intern-button");
 const exportGuestButton = document.getElementById("export-guest-button");
 
-const API_BASE_URL = "http://192.168.0.66:3000/api";
+const API_BASE_URL = "http://127.0.0.1:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
 
@@ -98,14 +98,30 @@ async function generateCharts() {
   const internListLength = Object.keys(interns || {}).length;
   const guestsListLength = Object.keys(guests || {}).length;
 
-  const returningVisitors = internListLength;
-  const newVisitors = guestsListLength;
+  const isMale = (honorific) => honorific?.toLowerCase() === "mr.";
+  const isFemale = (honorific) =>
+    ["ms.", "mrs."].includes(honorific?.toLowerCase());
 
-  const internship = internListLength;
-  const tbiAssessment = 3;
-  const justVisiting = guestsListLength;
+  const allPeople = [...Object.values(interns), ...Object.values(guests)];
 
-  barChartInstance = await createBarChart(chartContexts.bar, "daily"); 
+  const maleCount = allPeople.filter(person => isMale(person.honorifics)).length;
+  const femaleCount = allPeople.filter(person => isFemale(person.honorifics)).length;
+
+  const tbiAssessment = Object.values(guests).filter(guest =>
+    guest.address?.toLowerCase().includes("tbi")
+  ).length;
+  const justVisiting = guestsListLength - tbiAssessment;
+
+  const rawData = {
+     logs: [
+      ...extractLogsFromData(interns),
+      ...extractLogsFromData(guests)
+     ] 
+  };
+
+  barChartInstance = await createBarChart(
+    chartContexts.bar, "daily", rawData
+  ); 
 
   await createDoughnutChart(
     chartContexts.visitorCategory,
@@ -116,16 +132,16 @@ async function generateCharts() {
 
   await createDoughnutChart(
     chartContexts.returningVsNew,
-    "Returning vs New",
-    ["Returning", "New"],
-    [returningVisitors, newVisitors]
+    "Male vs Female",
+    ["Male", "Female"],
+    [maleCount, femaleCount]
   );
 
   await createDoughnutChart(
     chartContexts.officeActivity,
     "Office Activity",
     ["Intern", "TBI", "Visiting"],
-    [internship, tbiAssessment, justVisiting]
+    [internListLength, tbiAssessment, justVisiting]
   );
 }
 
@@ -291,7 +307,6 @@ function generateChartData(type, rawData) {
       return {
         labels: ["8:00", "9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00", "4:00", "5:00"],
         data: hourBuckets
-        // data: rawData?.hourlyCounts || [15, 5, 7, 20, 30, 20, 5, 2, 5, 10],
       };
 
     case "weekly":
@@ -304,7 +319,6 @@ function generateChartData(type, rawData) {
         if (index != null) dayCounts[index]++;
       });
       return { labels: days, data: dayCounts };
-      // data: rawData?.dailyCounts || [50, 60, 40, 70, 90, 30, 20],
 
     case "monthly":
       const monthlyDayCounts = Array.from({ length: 31 }, () => 0);
@@ -314,8 +328,21 @@ function generateChartData(type, rawData) {
         monthlyDayCounts[day - 1]++;
       });
       return {
-        labels: dayCounts.map((_, i) => `Day ${i + 1}`),
+        labels: monthlyDayCounts.map((_, i) => `Day ${i + 1}`),
         data: monthlyDayCounts
+      };
+
+    case "yearly":
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthCounts = new Array(12).fill(0);
+      logs.forEach(log => {
+        const date = new Date(log.date);
+        const month = date.getMonth();
+        monthCounts[month]++;
+      });
+      return {
+        labels: monthNames,
+        data: monthCounts
       };
 
     default:
@@ -323,12 +350,21 @@ function generateChartData(type, rawData) {
   }
 }
 
+function extractLogsFromData(dataObject) {
+  return Object.values(dataObject).flatMap(entry =>
+    (entry.logs || []).map(log => ({
+      date: log.date,
+      timeIn: log.timeIn
+    }))
+  ).filter(log => log.date && log.timeIn); // Filter out incomplete logs
+}
 
 function getXLabel(type) {
   switch (type) {
     case "daily": return "Time of Day";
     case "weekly": return "Day of the Week";
     case "monthly": return "Day of the Month";
+    case "yearly": return "Month of the Year";
     default: return "";
   }
 }
@@ -354,8 +390,14 @@ barChartFilterType.addEventListener("change", async (e) => {
   if (barChartInstance) {
     barChartInstance.destroy();
   }
+  const rawData = {
+    logs: [
+      ...extractLogsFromData(await getInternList()),
+      ...extractLogsFromData(await getGuestList())
+    ]
+  };
 
-  barChartInstance = await createBarChart(chartContexts.bar, type);
+  barChartInstance = await createBarChart(chartContexts.bar, type, rawData);
 })
 
 exportInternButton.addEventListener("click", async () => {

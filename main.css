@@ -338,6 +338,26 @@ option {
   background-color: black;
 }
 
+.export-container{
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 15px;
+}
+
+.export{
+  border: solid white 1px;
+  border-radius: 20px;
+  padding: 0 20px;
+  width: 40%;
+  color: white;
+  transition: all ease 0.1s;
+}
+
+.export:hover{
+  transform: scale(1.03);
+  cursor: pointer;
+}
+
 .search-buttones{
   display: flex;
   justify-content: space-evenly;
@@ -358,6 +378,16 @@ option {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   border-radius: 20px;
+}
+
+.search-buttones p{
+  cursor: pointer;
+  transition: all ease 0.2s;
+}
+
+.search-buttones p:hover{
+  transform: scale(1.1);
+  text-decoration: underline;
 }
 
 .back-button{
@@ -398,9 +428,12 @@ option {
 
 .search {
   width: 100%;
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
 }
 
-.search input {
+.search input, .admin-search input {
   width: 90%;
   margin: 1vw;
   border-radius: 15px;
