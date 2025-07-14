@@ -128,15 +128,15 @@ function renderGuests(guests) {
         <p>${info.honorifics || "Mr."} ${info["full name"]} ${info.suffix || ""}</p>
         ${info.logs?.[info.logs.length - 1]?.timeIn || "N/A"}
       </div>
-      <div class="person-bottom">
-        <p>${info.address || "No address"}</p>
-      </div>
-      <button 
-        class="Time" 
-        data-name="${name}" 
-        data-status="${info.status || "Time-Out"}">
-        ${userStatus}
-      </button>
+<div class="person-bottom">
+  <p>${info.address || "No address"}</p>
+  <button 
+    class="Time" 
+    data-name="${name}" 
+    data-status="${info.status || "Time-Out"}">
+    ${userStatus}
+  </button>
+</div>
     `;
 
     personDiv.addEventListener("click", async (e) => {
