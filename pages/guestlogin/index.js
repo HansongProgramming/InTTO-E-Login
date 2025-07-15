@@ -15,6 +15,15 @@ let selectedGuest = null;
 
 window.onload = async () => {
   const guests = await getGuestList();
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventName = urlParams.get("event");
+
+  if (eventName) {
+    console.log(eventName);
+    const event = document.getElementById("event").value = eventName;
+  }
+
   console.log(guests);
   if (guests) renderGuests(guests);
   renderTime();
@@ -51,7 +60,6 @@ async function updateGuestList(data, reRender = true) {
   } catch (err) {
     console.error("Error updating guest list:", err);
   }
-  window.location.reload();
 }
 
 async function editGuest(fullName, updates, reRender = true) {
@@ -73,7 +81,6 @@ async function editGuest(fullName, updates, reRender = true) {
   } catch (err) {
     console.error("Error editing guest:", err);
   }
-  window.location.reload();
 }
 
 
@@ -92,7 +99,6 @@ async function deleteGuest(fullName, reRender = true) {
   } catch (err) {
     console.error("Error deleting guest:", err);
   }
-  window.location.reload();
 }
 
 
@@ -118,6 +124,13 @@ function renderGuests(guests) {
   listContainer.innerHTML = "";
 
   Object.entries(guests).forEach(([name, info]) => {
+    const lastLog = info.logs?.[info.logs.length - 1];
+    const isTimedOut = lastLog?.timeOut;
+
+    if (isTimedOut) {
+      return;
+    }
+
     const personDiv = document.createElement("div");
     personDiv.className = "person";
 
@@ -128,15 +141,15 @@ function renderGuests(guests) {
         <p>${info.honorifics || "Mr."} ${info["full name"]} ${info.suffix || ""}</p>
         ${info.logs?.[info.logs.length - 1]?.timeIn || "N/A"}
       </div>
-<div class="person-bottom">
-  <p>${info.address || "No address"}</p>
-  <button 
-    class="Time" 
-    data-name="${name}" 
-    data-status="${info.status || "Time-Out"}">
-    ${userStatus}
-  </button>
-</div>
+      <div class="person-bottom">
+        <p>${info.address || "No address"}</p>
+        <button 
+          class="Time" 
+          data-name="${name}" 
+          data-status="${info.status || "Time-Out"}">
+          ${userStatus}
+        </button>
+      </div>
     `;
 
     personDiv.addEventListener("click", async (e) => {
@@ -194,7 +207,7 @@ listContainer.addEventListener("click", async (event) => {
     button.textContent = newStatus === "Time-In" ? "Time-out" : "Time-in";
 
     try {
-      await editGuest(guest, updates, false);
+      await editGuest(guest, updates);
       console.log(`Updated user: ${guest}`);
 
       const guestData = await getGuestList();

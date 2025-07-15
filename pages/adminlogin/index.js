@@ -14,6 +14,8 @@ const exportInternButton = document.getElementById("export-intern-button");
 const exportGuestButton = document.getElementById("export-guest-button");
 const exportDataButton = document.getElementById("export-data-button");
 
+const createEventButton = document.getElementById("create-event");
+
 const API_BASE_URL = "http://127.0.0.1:3000/api";
 const INTERN_LIST_URL = `${API_BASE_URL}/internList`;
 const GUEST_LIST_URL = `${API_BASE_URL}/guestList`;
@@ -200,6 +202,8 @@ async function exportDataToCSV(dataType) {
     const logs = entry.logs || [];
 
     logs.forEach(log => {
+      if (!isDateInCurrentWeek(log.date)) return;
+
       rows.push({
         ID: id,
         "Full Name": `${entry.honorifics || ""} ${entry["full name"]}`.trim(),
@@ -215,13 +219,22 @@ async function exportDataToCSV(dataType) {
   }
 
   if (rows.length === 0) {
-    alert("No data to export.");
+    const existingError = document.querySelector(".search");
+    const errorEl = document.createElement("p");
+    
+    if (errorEl) errorEl.remove();
+    errorEl.className = "error-message";
+    errorEl.textContent =  "No Logs.";
+    errorEl.style.textAlign = "center";
+    errorEl.style.color = "red";
+
+    search.appendChild(errorEl);
     return;
   }
 
   const headers = Object.keys(rows[0]);
   const csvRows = [
-    headers.join(","), // CSV header row
+    headers.join(","),
     ...rows.map(row =>
       headers.map(field => `"${(row[field] ?? "").toString().replace(/"/g, '""')}"`).join(",")
     )
@@ -229,7 +242,6 @@ async function exportDataToCSV(dataType) {
 
   const csvContent = csvRows.join("\n");
 
-  // Option A: Download in-browser (renderer process)
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -242,41 +254,86 @@ async function exportDataToCSV(dataType) {
   URL.revokeObjectURL(url);
 }
 
-async function exportChartData() {
-  if (!barChartInstance) {
-    alert("Chart not generated yet.");
-    return;
+async function exportChartDataToXLSX() {
+  const XLSX = require("xlsx");
+
+  const workbook = XLSX.utils.book_new();
+
+  const chartTypes = ["daily", "weekly", "monthly", "yearly"];
+  const allLogs = {
+    logs: [
+      ...extractLogsFromData(await getInternList()),
+      ...extractLogsFromData(await getGuestList())
+    ]
+  };
+
+  for (const type of chartTypes) {
+    const { labels, data } = generateChartData(type, allLogs);
+    const rows = labels.map((label, i) => ({
+      Label: label,
+      "Visitor Count": data[i]
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(workbook, worksheet, `${type}_BarChart`);
   }
 
-  const labels = barChartInstance.data.labels;
-  const values = barChartInstance.data.datasets[0].data;
+  const interns = await getInternList();
+  const guests = await getGuestList();
 
-  if (!labels || !values || labels.length !== values.length) {
-    alert("No chart data to export.");
-    return;
-  }
+  const internListLength = Object.keys(interns || {}).length;
+  const guestsListLength = Object.keys(guests || {}).length;
 
-  const rows = labels.map((label, i) => ({
-    Label: label,
-    "Visitor Count": values[i]
-  }));
+  const allPeople = [...Object.values(interns), ...Object.values(guests)];
+  const maleCount = allPeople.filter(p => (p.honorifics || "").toLowerCase() === "mr.").length;
+  const femaleCount = allPeople.filter(p => ["ms.", "mrs."].includes((p.honorifics || "").toLowerCase())).length;
 
-  const headers = Object.keys(rows[0]);
-  const csvRows = [
-    headers.join(","),
-    ...rows.map(row =>
-      headers.map(field =>
-        `"${(row[field] ?? "").toString().replace(/"/g, '""')}"`
-      ).join(",")
-    )
+  const tbiAssessment = Object.values(guests).filter(g =>
+    g.address?.toLowerCase().includes("tbi")
+  ).length;
+  const justVisiting = guestsListLength - tbiAssessment;
+
+  const doughnutData = [
+    {
+      sheet: "Visitor_Category",
+      labels: ["Guests", "Interns"],
+      values: [guestsListLength, internListLength]
+    },
+    {
+      sheet: "Male_vs_Female",
+      labels: ["Male", "Female"],
+      values: [maleCount, femaleCount]
+    },
+    {
+      sheet: "Office_Activity",
+      labels: ["Intern", "TBI", "Visiting"],
+      values: [internListLength, tbiAssessment, justVisiting]
+    }
   ];
 
-  const csvContent = csvRows.join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  doughnutData.forEach(chart => {
+    const rows = chart.labels.map((label, i) => ({
+      Category: label,
+      Count: chart.values[i]
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(workbook, worksheet, chart.sheet);
+  });
+
+  // Write to binary string
+  const workbookBinary = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array" // Important: write as array buffer
+  });
+
+  const blob = new Blob([workbookBinary], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  });
+
+  // Trigger download
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "chart_data_export.csv";
+  a.download = "All_Charts_Export.xlsx";
   a.style.display = "none";
   document.body.appendChild(a);
   a.click();
@@ -284,11 +341,28 @@ async function exportChartData() {
   URL.revokeObjectURL(url);
 }
 
+function isDateInCurrentWeek(dateStr) {
+  const now = new Date();
+  const inputDate = new Date(dateStr);
+  
+  const day = now.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+  const diffToMonday = (day === 0 ? -6 : 1 - day);
+  
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday);
+  monday.setHours(0, 0, 0, 0);
 
-function renderInterns(interns) {
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+
+  return inputDate >= monday && inputDate <= sunday;
+}
+
+function renderGuests(guests) {
   listContainer.innerHTML = "";
 
-  Object.entries(interns).forEach(([_, info]) => {
+  Object.entries(guests).forEach(([_, info]) => {
     const personDiv = document.createElement("div");
     personDiv.className = "person";
 
@@ -443,8 +517,28 @@ barChartFilterType.addEventListener("change", async (e) => {
 })
 
 exportInternButton.addEventListener("click", async () => exportDataToCSV("interns"));
-exportGuestButton.addEventListener("click", async () => exportDataToCSV("guests") );
-exportDataButton.addEventListener("click", async () => exportChartData() );
+exportGuestButton.addEventListener("click", async () => exportDataToCSV("guests"));
+exportDataButton.addEventListener("click", async () => exportChartDataToXLSX());
+
+createEventButton.addEventListener("click", () => {
+  const eventContainer = document.getElementById("event-name");
+  const eventName = eventContainer.value.trim();
+  if (!eventName) {
+    const existingError = document.querySelector(".events-container");
+    const errorEl = document.createElement("p");
+    
+    if (errorEl) errorEl.remove();
+    errorEl.className = "error-message";
+    errorEl.textContent = "Please Enter an Event.";
+    errorEl.style.textAlign = "center";
+    errorEl.style.color = "red";
+
+    existingError.appendChild(errorEl);
+    return;
+  } else {
+    window.location.href = `../guestlogin/guestlogin.html?event=${encodeURIComponent(eventName)}`;
+  }
+});
 
 
 const d1 = `M15 1.25H199C206.87 1.25 213.25 7.62994 213.25 15.5V40C213.25 48.6985 220.302 55.75 229 55.75H634C641.87 55.75 648.25 62.1299 648.25 70V517C648.25 524.87 641.87 531.25 634 531.25H15C7.12994 531.25 0.75 524.87 0.75 517V15.5C0.750003 7.62995 7.12995 1.25 15 1.25Z`;
@@ -513,6 +607,7 @@ function setupTabs() {
   toggleTab("tab1");
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
   setupTabs();
   backButton.addEventListener("click", () => {
@@ -522,8 +617,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 window.onload = async () => {
-  const interns = await getInternList();
-  if (interns) renderInterns(interns);
+  const guests = await getGuestList();
+  if (guests) renderGuests(guests);
 
   renderTime();
   setupOfficeTimeline();

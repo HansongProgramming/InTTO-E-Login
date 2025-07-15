@@ -118,11 +118,24 @@ function showAdminLoginInterface() {
   backButton.textContent = "Back";
   backButton.className = "back-buttoner";
 
+  const showError = (message) => {
+    const existingError = search.querySelector(".error-message");
+    if (existingError) existingError.remove();
+
+    const errorEl = document.createElement("p");
+    errorEl.className = "error-message";
+    errorEl.textContent = message;
+    errorEl.style.textAlign = "center";
+    errorEl.style.color = "red";
+
+    search.appendChild(errorEl);
+  };
+
   loginButton.addEventListener("click", async () => {
     const password = passwordInput.value.trim();
 
     if (!password) {
-      alert("Please enter a password.");
+      showError("Please Enter a Password.");
       return;
     }
 
@@ -130,20 +143,19 @@ function showAdminLoginInterface() {
       const result = await handleAdminLogin({ password });
 
       if (result?.success) {
-        alert("Login successful!");
         window.location.href = "../adminlogin/adminlogin.html";
       } else {
-        alert("Incorrect password.");
+        showError("Wrong Password.");
         passwordInput.value = "";
-        setTimeout(() => passwordInput.focus(), 50); // Re-focus reliably
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("An error occurred. Try again.");
+      showError("An error occurred. Try again.");
       passwordInput.value = "";
       setTimeout(() => passwordInput.focus(), 50);
     }
   });
+
 
   backButton.addEventListener("click", hideAdminLoginInterface);
 
@@ -154,11 +166,7 @@ function showAdminLoginInterface() {
 
   wrapper.appendChild(search);
   container.appendChild(wrapper);
-
-  // Focus after adding to DOM to ensure it's not blocked
-  setTimeout(() => passwordInput.focus(), 100);
 }
-
 
 
 function hideAdminLoginInterface() {
