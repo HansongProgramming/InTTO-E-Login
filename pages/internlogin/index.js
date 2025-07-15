@@ -45,6 +45,7 @@ async function updateInternList(data, reRender = true) {
   } catch (err) {
     console.error("updateInternList:", err);
   }
+  window.location.reload();
 }
 
 async function editIntern(id, updates, reRender = true) {
@@ -59,6 +60,7 @@ async function editIntern(id, updates, reRender = true) {
   } catch (err) {
     console.error("editIntern:", err);
   }
+  window.location.reload();
 }
 
 async function deleteIntern(name, reRender = true) {
@@ -69,6 +71,7 @@ async function deleteIntern(name, reRender = true) {
   } catch (err) {
     console.error("deleteIntern:", err);
   }
+  window.location.reload();
 }
 
 

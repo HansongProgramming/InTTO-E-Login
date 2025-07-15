@@ -10,7 +10,7 @@ function createWindow() {
     width: 1920,
     height: 1080,
     modal: true,
-    fullscreen: true,
+    // fullscreen: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
