@@ -16,8 +16,8 @@
   },
   "scripts": {
     "start": "electron .",
-    "package": "electron-builder",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "package": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "chart.js": "^4.4.1",
@@ -39,29 +39,37 @@
   "build": {
     "appId": "com.intto.e-login",
     "productName": "InTTO E-Login",
-    "files": [
-      "db/**/*",
-      "pages/**/*",
-      "server/**/*",
-      "main.js",
-      "main.css",
-      "package.json"
-    ],
+"files": [
+  "db/**/*",
+  "pages/**/*",
+  "server/**/*",
+  "public/images/**/*",
+  "main.js",
+  "main.css",
+  "package.json"
+],
     "extraResources": [
       {
-        "from": "images",
-        "to": "images",
-        "filter": [
-          "**/*"
-        ]
+        "from": "public/images",
+        "to": "images"
       },
       {
         "from": "public/.env",
-        "to": ".env"
+        "to": "../.env"  
       }
     ],
     "directories": {
+      "output": "dist",
       "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
     }
   }
 }
